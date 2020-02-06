@@ -7,7 +7,7 @@
     }
 
     type Mutation {
-        singup(name: String!, email: String!, password: String!): User
+        signup(name: String!, email: String!, password: String!): User
     }
 
     type User {
@@ -15,4 +15,13 @@
         name: String!
         email: String!
         password: String!
+        products: [Product]
+    }
+
+    type Product {
+        id: ID!
+        description: String!
+        price: Float!
+        imageUrl: String!
+        user: User!
     }
