@@ -7,7 +7,16 @@
     }
 
     type Mutation {
-        signup(name: String!, email: String!, password: String!): User
+        signup(
+            name: String!, 
+            email: String!, 
+            password: String!
+            ): User
+        createProduct(
+            description: String! 
+            price: Float! 
+            imageUrl: String!
+            ): Product!
     }
 
     type User {
