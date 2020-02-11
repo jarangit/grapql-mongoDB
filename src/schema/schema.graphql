@@ -4,6 +4,8 @@
         me: User!
         user(id: ID!): User
         users: [User]!
+        product(id: ID!): Product
+        products: [Product]!
     }
 
     type Mutation {
@@ -17,7 +19,11 @@
             price: Float! 
             imageUrl: String!
             ): Product!
+        addToCart(id: ID!): CartItem!
     }
+
+
+    scalar Date
 
     type User {
         id: ID!
@@ -25,6 +31,8 @@
         email: String!
         password: String!
         products: [Product]
+        carts: [CartItem]!
+        createdAt: Date!
     }
 
     type Product {
@@ -33,4 +41,13 @@
         price: Float!
         imageUrl: String!
         user: User!
+        createdAt: Date!
+    }
+
+    type CartItem {
+        id: ID!
+        product: Product!
+        quantity: Int!
+        user: User!
+        createdAt: Date!
     }

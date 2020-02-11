@@ -29,7 +29,8 @@ const Mutation = {
     },
 
     createProduct: async (parent, args, context, info) => {
-        const userId = "5e3bd6de5478ad234460bfa7"
+        const userId = "5e410a922cf6d113c47d3886"
+
 
         if (!args.description || !args.price || !args.imageUrl){
             throw new Error('Please provide all required fields.')
@@ -37,8 +38,9 @@ const Mutation = {
 
         const product = await Product.create({...args, user: userId})
         const user = await User.findById(userId)
+        console.log(user.products)
 
-        if(!userId.products){
+        if(!user.products){
             user.products = [product]
         } else {
             user.products.push(product)
@@ -46,7 +48,14 @@ const Mutation = {
 
         await user.save()
 
-        return product
+        return Product.findById(product.id).populate({
+            path: "user",
+            populate: { path: "products" }
+        })
+    },
+    addToCart : async (parent, args, context, info) => {
+        //this id is  productId
+        const {id} = args
     }
 
 }
