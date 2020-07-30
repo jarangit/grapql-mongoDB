@@ -26,6 +26,7 @@
             imageUrl: String
             ): Product!
         addToCart(id: ID!): CartItem!
+        deleteCart(id: ID!): CartItem!
     }
 
 

@@ -6,11 +6,13 @@ const Query ={
     user: (parent, args, context, info) => User.findById(args.id).populate({
         path: "products",
         populate: { path: "user" }
-    }),
+    })
+    .populate({ path: "carts", populate: { path: "product" } }),
     users: (parent, args, context, info) => User.find({}).populate({
         path: "products",
         populate: { path: "user" }
-    }),
+    })
+    .populate({ path: "carts", populate: { path: "product" } }),
     product: (parent, args, context, info) =>
         Product.findById(args.id).populate({
         path: "user",
