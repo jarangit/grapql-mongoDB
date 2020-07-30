@@ -19,6 +19,12 @@
             price: Float! 
             imageUrl: String!
             ): Product!
+         updateProduct(
+             id: ID!
+            description: String
+            price: Float
+            imageUrl: String
+            ): Product!
         addToCart(id: ID!): CartItem!
     }
 
