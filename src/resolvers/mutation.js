@@ -56,6 +56,19 @@ const Mutation = {
     addToCart : async (parent, args, context, info) => {
         //this id is  productId
         const {id} = args
+
+        try{
+            //หา user ที่ต้อง cart
+            const userId = "5e425f9c424d30217cb184b6"
+
+            //เช็คว่ามีการเพิ่มสินค้าหรือยัง
+            const user = await (await User.findById(userId)).populated({
+                path: "carts",
+                populate: { path: "product" }
+            })
+        } catch(error){
+            console.log(error)
+        }
     }
 
 }
