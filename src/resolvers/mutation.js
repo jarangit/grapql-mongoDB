@@ -157,22 +157,23 @@ const Mutation = {
         // check logged
 
         // Find user id from request ---> Find user
-        const userId = ""
+        const userId = "5e425f9c424d30217cb184b6"
 
         const user = await User.findById(userId)
 
+
         // Check owner ship of the cart 
-        if (cart.user.toString() !== userId){
-            throw new Error('Not authorized')
-        }
+        if (cart.user.toString() !== userId) {
+            throw new Error("Not authorized.")
+          }
 
         // Delete cart 
         const deletedCart =  await CartItem.findOneAndRemove(id)
 
         const updatedUserCart =  user.carts.filter(
-                cartId => cartId.toString() !== deleteCart.id.toString()
+                cartId => cartId.toString() !== deletedCart.id.toString()
             )
-            await User,findByIdAndUpdate(userId, {carts: updatedUserCart})
+            await User.findByIdAndUpdate(userId, {carts: updatedUserCart})
 
             return deletedCart
     }
