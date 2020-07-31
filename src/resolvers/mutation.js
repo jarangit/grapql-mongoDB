@@ -33,7 +33,7 @@ const Mutation = {
         const userId = "5e410a922cf6d113c47d3886"
 
 
-        if (!args.description || !args.price || !args.imageUrl){
+        if (!args.name ||!args.description || !args.price || !args.imageUrl){
             throw new Error('Please provide all required fields.')
         }
 
@@ -55,7 +55,7 @@ const Mutation = {
         })
     },
     updateProduct : async (parent, args, context, info) => {
-        const {id, description, price, imageUrl} = args
+        const {id, name, description, price, imageUrl} = args
 
         //Check if user logged in
 
@@ -70,6 +70,7 @@ const Mutation = {
 
         // Form updated information
         const updateInfo = {
+            name: !!name ? name : product.name,
             description: !!description ? description : product.description,
             price: !!price ? price : product.price,
             imageUrl: !!imageUrl ? imageUrl : product.imageUrl
@@ -84,7 +85,29 @@ const Mutation = {
         return updatedProduct
 
     },
+    deleteProduct: async (parent, args, context, info) => {
+        const {id} = args
 
+        const product = await Product.findById(id)
+
+        const userId = "5e410a922cf6d113c47d3886"
+        const user = await User.findById(userId)
+
+        if (product.user.toString() !== userId){
+            throw new Error("Not authorized.")
+        }
+
+        const deletedProduct = await Product.findOneAndRemove(id)
+
+        const updatedUserProduct = user.products.filter(
+            productId =>  productId.toString() !== deletedProduct.id.toString()
+        )
+
+        await User.findByIdAndUpdate(userId, {products: updatedUserProduct})
+
+        return deletedProduct
+
+    },
     addToCart : async (parent, args, context, info) => {
         //this id is  productId
         const {id} = args

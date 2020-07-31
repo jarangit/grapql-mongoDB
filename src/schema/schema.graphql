@@ -15,18 +15,21 @@
             password: String!
             ): User
         createProduct(
+            name: String! 
             description: String! 
             price: Float! 
             imageUrl: String!
             ): Product!
          updateProduct(
-             id: ID!
+            id: ID!
+            name: String! 
             description: String
             price: Float
             imageUrl: String
             ): Product!
         addToCart(id: ID!): CartItem!
         deleteCart(id: ID!): CartItem!
+        deleteProduct(id: ID!): Product!
     }
 
 
@@ -45,6 +48,7 @@
     type Product {
         id: ID!
         description: String!
+        name: String!
         price: Float!
         imageUrl: String!
         user: User!
