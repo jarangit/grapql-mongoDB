@@ -18,22 +18,23 @@ const Query ={
 
         if (!validPassword) throw new Error("Invalid email or password.")
 
-        const token = jwt.sign({userId: user.is}, process.env.SECRET, {expiresIn: "7day"})
+        const token = jwt.sign({userId: user.id}, process.env.SECRET, {expiresIn: "7day"})
 
         return {userId: user.id, jwt: token}
     },
     user: (parent, args, { userId }, info) => {
-        // Check if user login
-        if (!userId) throw new Error ("Please login")
-
-        if (userId !== args.id) throw new Error ("Not authorized.")
-        
-       
-        return User.findById(args.id).populate({
+        // Check if user logged in
+        if (!userId) throw new Error("Please log in")
+    
+        if (userId !== args.id) throw new Error("Not authorized.")
+    
+        return User.findById(args.id)
+          .populate({
             path: "products",
             populate: { path: "user" }
-        }).populate({ path: "carts", populate: { path: "product" } })
-    },
+          })
+          .populate({ path: "carts", populate: { path: "product" } })
+      },
     users: (parent, args, context, info) => User.find({}).populate({
         path: "products",
         populate: { path: "user" }
