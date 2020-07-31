@@ -29,9 +29,8 @@ const Mutation = {
         return User.create({...args, email, password})
     },
 
-    createProduct: async (parent, args, context, info) => {
-        const userId = "5e410a922cf6d113c47d3886"
-
+    createProduct: async (parent, args, { userId }, info) => {
+        if (!userId) throw new Error ("Please login")
 
         if (!args.name ||!args.description || !args.price || !args.imageUrl){
             throw new Error('Please provide all required fields.')
@@ -54,16 +53,16 @@ const Mutation = {
             populate: { path: "products" }
         })
     },
-    updateProduct : async (parent, args, context, info) => {
+    updateProduct : async (parent, args, {userId}, info) => {
         const {id, name, description, price, imageUrl} = args
 
         //Check if user logged in
+        if (!userId) throw new Error ("Please login")
 
         //Find product in database
         const product = await Product.findById(id)
 
         //Check if user is the owner of the product
-        const userId = "5e410a922cf6d113c47d3886"
         if(userId !== product.user.toString()){
             throw new Error('You are not authorized')
         }
@@ -85,12 +84,12 @@ const Mutation = {
         return updatedProduct
 
     },
-    deleteProduct: async (parent, args, context, info) => {
+    deleteProduct: async (parent, args, {userId}, info) => {
         const {id} = args
+        if (!userId) throw new Error ("Please login")
 
         const product = await Product.findById(id)
 
-        const userId = "5e410a922cf6d113c47d3886"
         const user = await User.findById(userId)
 
         if (product.user.toString() !== userId){
@@ -108,13 +107,13 @@ const Mutation = {
         return deletedProduct
 
     },
-    addToCart : async (parent, args, context, info) => {
+    addToCart : async (parent, args, {userId}, info) => {
         //this id is  productId
         const {id} = args
+        if (!userId) throw new Error ("Please login")
 
         try{
             //หา user ที่ต้อง cart
-            const userId = "5e425f9c424d30217cb184b6"
 
             //เช็คว่ามีการเพิ่มสินค้าหรือยัง
             const user =  await User.findById(userId).populate({
@@ -170,8 +169,9 @@ const Mutation = {
             console.log(error)
         }
     },
-    deleteCart: async (parent, args, context, info) => {
+    deleteCart: async (parent, args, {userId}, info) => {
         const { id } = args
+        if (!userId) throw new Error ("Please login")
 
 
         // Find cart from give id 
@@ -180,7 +180,6 @@ const Mutation = {
         // check logged
 
         // Find user id from request ---> Find user
-        const userId = "5e425f9c424d30217cb184b6"
 
         const user = await User.findById(userId)
 
