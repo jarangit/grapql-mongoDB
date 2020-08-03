@@ -1,27 +1,8 @@
 import User from "../models/user"
 import Product from '../models/product'
 
-import bcrypt from 'bcrypt'
-import jwt from 'jsonwebtoken'
 
 const Query ={
-    login: async (parent, args, context, info) => {
-        const {email, password} = args
-
-        //Finu user in database
-        const user = await User.findOne({email})
-
-        if (!user) throw new Error ("Email not found, please sing up.")
-
-        // Check if password correct
-        const validPassword = await bcrypt.compare(password, user.password)
-
-        if (!validPassword) throw new Error("Invalid email or password.")
-
-        const token = jwt.sign({userId: user.id}, process.env.SECRET, {expiresIn: "7day"})
-
-        return {userId: user.id, jwt: token}
-    },
     user: (parent, args, { userId }, info) => {
         // Check if user logged in
         if (!userId) throw new Error("Please log in")

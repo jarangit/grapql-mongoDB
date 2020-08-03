@@ -1,10 +1,33 @@
 import bcrypt from "bcrypt" 
+import jwt from 'jsonwebtoken'
 import User from "../models/user"
 import Product from '../models/product'
 import CartItem from "../models/cartItem"
 
 
 const Mutation = {
+    login: async (parent, args, context, info) => {
+        const {email, password} = args
+
+        //Find user in database
+        const user = await User.findOne({ email })
+        .populate({
+            path: 'products',
+            populate: { path: 'user' }
+            })
+        .populate({ path: 'carts', populate: { path: 'product' } })
+
+        if (!user) throw new Error ("Email not found, please sing up.")
+
+        // Check if password correct
+        const validPassword = await bcrypt.compare(password, user.password)
+
+        if (!validPassword) throw new Error("Invalid email or password.")
+
+        const token = jwt.sign({userId: user.id}, process.env.SECRET, {expiresIn: "7day"})
+
+        return {user, jwt: token}
+    },
     signup: async (parent, args, context, info) => {
 
         //Trim and lower case email
