@@ -48,7 +48,7 @@ const Query ={
         Product.find().populate({
         path: "user",
         populate: { path: "products" }
-        })
+        }).sort({ createdAt: 'desc' })
     
 }
 

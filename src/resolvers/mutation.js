@@ -12,7 +12,7 @@ const Mutation = {
 
         //Check if email already exist in database
         const currentUsers =  await User.find({})
-        const isEmailExist = currentUsers.findIndex(user => user.emit === email) > -1
+        const isEmailExist = currentUsers.findIndex(user => user.email === email) > -1
 
         if (isEmailExist) {
             throw new Error('Email already exist.')
