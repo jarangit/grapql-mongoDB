@@ -12,6 +12,7 @@
             email: String!,
             password: String!
         ): AuthData
+        requestResetPassword(email: String!): Massage!
         signup(
             name: String!, 
             email: String!, 
@@ -42,7 +43,7 @@
         id: ID!
         name: String!
         email: String!
-        password: String!
+        # password: String!
         products: [Product]
         carts: [CartItem]!
         createdAt: Date!
@@ -69,4 +70,7 @@
     type AuthData {
         user: User
         jwt: String
+    }
+    type Massage {
+        massage: String!
     }

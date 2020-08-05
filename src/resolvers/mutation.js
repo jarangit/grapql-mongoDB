@@ -1,3 +1,4 @@
+import  { randomBytes } from 'crypto'
 import bcrypt from "bcrypt" 
 import jwt from 'jsonwebtoken'
 import User from "../models/user"
@@ -27,6 +28,26 @@ const Mutation = {
         const token = jwt.sign({userId: user.id}, process.env.SECRET, {expiresIn: "7day"})
 
         return {user, jwt: token}
+    },
+    requestResetPassword: async (parent, {email}, context, info) => {
+        // Find user in database
+        const user = await User.findOne({email})
+
+        //2. If not found user the throw error 
+        if (!user) throw Error ("Email not found")
+
+        // 3. Create resetPasswordToken and resetTokenExpiry
+        const resetPasswordToken = randomBytes(32).toString("hex")
+        const resetTokenExpiry = Date.now() + 30 * 60 * 10
+
+        // 4. Update user { save reset token and token expiry }
+
+        await User.findByIdAndUpdate(user.id, {
+            resetPasswordToken,
+            resetTokenExpiry
+        })
+
+        return { massage: "Check your email" }
     },
     signup: async (parent, args, context, info) => {
 
