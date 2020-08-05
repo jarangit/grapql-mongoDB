@@ -72,5 +72,5 @@
         jwt: String
     }
     type Massage {
-        massage: String!
+        message: String!
     }

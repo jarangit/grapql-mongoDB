@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken'
 import User from "../models/user"
 import Product from '../models/product'
 import CartItem from "../models/cartItem"
+import sgMail from '@sendgrid/mail'
 
 
 const Mutation = {
@@ -46,8 +47,29 @@ const Mutation = {
             resetPasswordToken,
             resetTokenExpiry
         })
+        // 5. Send link 
+        sgMail.setApiKey("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")
 
-        return { massage: "Check your email" }
+        const msg = {
+            from: 'jaran.dch@gmail.com',
+            to: 'app.jaran@gmail.com',
+            subject: 'Reset password link',
+            html: `
+                <div>
+                <p>Please click the link below to reset your password.</p> \n\n
+                <a href='http://localhost:3000/signin/resetpassword?resetToken=${resetPasswordToken}' target='blank' style={{color: 'blue'}}>Click to reset your password</a>
+                </div>
+            `
+        }
+
+        sgMail.send(msg).then(() => {
+            console.log('Message sent')
+        }).catch((error) => {
+            console.log(error.response.body)
+            console.log(error.response.body.errors[0].message)
+        })  
+        return { message: "Check your email" }
+
     },
     signup: async (parent, args, context, info) => {
 
