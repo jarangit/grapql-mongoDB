@@ -1,7 +1,7 @@
 
 # คือการเขียน schema อีกวิธีนึง
     type Query {
-        user: User
+        user(userId: ID!): User
         users: [User]!
         product(id: ID!): Product
         products: [Product]!
