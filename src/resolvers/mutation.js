@@ -48,16 +48,16 @@ const Mutation = {
             resetTokenExpiry
         })
         // 5. Send link 
-        sgMail.setApiKey("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")
-
+        sgMail.setApiKey(process.env.EMAIL_API_KEY)
+        
         const msg = {
-            from: 'jaran.dch@gmail.com',
-            to: 'app.jaran@gmail.com',
+            from: 's58127328108@ssru.ac.th',
+            to: user.email,
             subject: 'Reset password link',
             html: `
                 <div>
                 <p>Please click the link below to reset your password.</p> \n\n
-                <a href='http://localhost:3000/signin/resetpassword?resetToken=${resetPasswordToken}' target='blank' style={{color: 'blue'}}>Click to reset your password</a>
+                <a href='http://localhost:3000/register/resetPassword?resetToken=${resetPasswordToken}' target='blank' style={{color: 'blue'}}>Click to reset your password</a>
                 </div>
             `
         }
