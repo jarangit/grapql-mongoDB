@@ -13,6 +13,7 @@
             password: String!
         ): AuthData
         requestResetPassword(email: String!): Massage!
+        resetResetPassword(password: String!, token: String!): Massage!
         signup(
             name: String!, 
             email: String!, 

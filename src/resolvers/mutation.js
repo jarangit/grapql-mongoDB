@@ -5,6 +5,7 @@ import User from "../models/user"
 import Product from '../models/product'
 import CartItem from "../models/cartItem"
 import sgMail from '@sendgrid/mail'
+import { EROFS } from 'constants'
 
 
 const Mutation = {
@@ -39,7 +40,7 @@ const Mutation = {
 
         // 3. Create resetPasswordToken and resetTokenExpiry
         const resetPasswordToken = randomBytes(32).toString("hex")
-        const resetTokenExpiry = Date.now() + 30 * 60 * 10
+        const resetTokenExpiry = Date.now() + 30 * 60 * 100
 
         // 4. Update user { save reset token and token expiry }
 
@@ -70,6 +71,33 @@ const Mutation = {
         })  
         return { message: "Check your email" }
 
+    },
+    resetResetPassword: async (parent, {password, token}, context, info) => {
+        // Find user in database by reset token
+        const user = await User.findOne( { resetPasswordToken: token } )
+
+        // If can't found user throw error
+        if (!user) throw Error ('NOT FOUND USER')
+
+        // Check token expiry
+        const isTokenExpiry = user.resetTokenExpiry < Date.now()
+        
+        //If token expiry throw error
+        if (isTokenExpiry) throw Error ('YOUR TOKEN EXPIRY')
+
+        //Has new password
+        const hashedPassword =  await bcrypt.hash(password, 10)
+
+        //Update password user in database (and delete old password )
+        await User.findByIdAndUpdate(user.id, {
+            password: hashedPassword,
+            resetPasswordToken: null,
+            resetTokenExpiry: null
+        })
+        return {
+            message: "RESET PASSWORD COMPLETE"
+        }
+        
     },
     signup: async (parent, args, context, info) => {
 
