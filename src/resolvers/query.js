@@ -6,7 +6,7 @@ const Query ={
     user: (parent, args, { userId }, info) => {
         // Check if user logged in
         if (!userId) throw new Error("Please log in")
-    
+        console.log(userId)
     
         return User.findById(userId)
           .populate({
