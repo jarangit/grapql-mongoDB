@@ -27,7 +27,7 @@
             ): Product!
          updateProduct(
             id: ID!
-            name: String! 
+            name: String
             description: String
             price: Float
             imageUrl: String
