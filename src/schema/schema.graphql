@@ -5,6 +5,7 @@
         users: [User]!
         product(id: ID!): Product
         products: [Product]!
+        carts: [CartItem]!
     }
 
     type Mutation {
