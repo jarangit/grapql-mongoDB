@@ -179,7 +179,7 @@ const Mutation = {
 
     },
     deleteProduct: async (parent, args, {userId}, info) => {
-        const {id} = args
+        const { id } = args
         if (!userId) throw new Error ("Please login")
 
         const product = await Product.findById(id)
@@ -190,7 +190,7 @@ const Mutation = {
             throw new Error("Not authorized.")
         }
 
-        const deletedProduct = await Product.findOneAndRemove(id)
+        const deletedProduct = await Product.findByIdAndRemove(id)
 
         const updatedUserProduct = user.products.filter(
             productId =>  productId.toString() !== deletedProduct.id.toString()
@@ -284,7 +284,7 @@ const Mutation = {
           }
 
         // Delete cart 
-        const deletedCart =  await CartItem.findOneAndRemove(id)
+        const deletedCart =  await CartItem.findByIdAndRemove(id)
 
         const updatedUserCart =  user.carts.filter(
                 cartId => cartId.toString() !== deletedCart.id.toString()
@@ -292,7 +292,7 @@ const Mutation = {
             await User.findByIdAndUpdate(userId, {carts: updatedUserCart})
 
             return deletedCart
-    }
+    },
 
 }
 

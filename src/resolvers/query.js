@@ -1,5 +1,6 @@
 import User from "../models/user"
 import Product from '../models/product'
+import CartItem from "../models/cartItem"
 
 
 const Query ={
@@ -29,8 +30,12 @@ const Query ={
         Product.find().populate({
         path: "user",
         populate: { path: "products" }
-        }).sort({ createdAt: 'desc' })
-    
+        }).sort({ createdAt: 'desc' }),
+    carts: (parent, args, context, info) =>
+        CartItem.find().populate({
+          path: "user",
+          populate: { path: "carts" }
+        }).sort({ createdAt: 'desc' }),
 }
 
 export default Query
