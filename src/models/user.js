@@ -13,6 +13,9 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    providerId: {
+        type: String
+    },
     resetPasswordToken:  {
         type: String
     },
