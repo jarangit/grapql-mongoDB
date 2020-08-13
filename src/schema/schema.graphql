@@ -28,11 +28,7 @@
             ): Product!
          updateProduct(
             id: ID!
-<<<<<<< HEAD
             name: String
-=======
-            name: String 
->>>>>>> 0f007e5d07e86107c194eef14ada7b6d50424bc3
             description: String
             price: Float
             imageUrl: String
