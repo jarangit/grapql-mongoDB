@@ -18,8 +18,7 @@ console.log({PORT})
 
 const createServer = async () => {
   try{
-    await mongoose.connect(`mongodb+srv://${DB_USER}:${DB_PASSWORD}@graphql-basic-jndj6.mongodb.net/${DB_NAME}?retryWrites=true&w=majority`,{ useUnifiedTopology: true, useNewUrlParser: true  })
-  
+    await mongoose.connect(`mongodb+srv://${DB_USER}:${DB_PASSWORD}@theguitarnexdb.ymjnu.mongodb.net/${DB_NAME}?retryWrites=true&w=majority`,{ useUnifiedTopology: true, useNewUrlParser: true  })
           const app = express()
 
           app.get('/auth/facebook', passport.authenticate('facebook'))
