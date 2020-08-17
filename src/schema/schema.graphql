@@ -13,9 +13,18 @@
             email: String!,
             password: String!
         ): AuthData
+        edit_account_user(
+            id: ID!
+            name: String
+            tel: String
+            line_id: String
+            address:String
+            image_profile: String
+        ):User
         requestResetPassword(email: String!): Massage!
         resetResetPassword(password: String!, token: String!): Massage!
         signup(
+            username: String!,
             name: String!, 
             email: String!, 
             password: String!
@@ -26,7 +35,7 @@
             price: Float! 
             imageUrl: String!
             ): Product!
-         updateProduct(
+        updateProduct(
             id: ID!
             name: String
             description: String
@@ -43,8 +52,13 @@
 
     type User {
         id: ID!
+        username: String!
         name: String!
         email: String!
+        tel: String
+        line_id: String
+        address: String
+        image_profile: String
         # password: String!
         products: [Product]
         carts: [CartItem]!

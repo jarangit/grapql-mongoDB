@@ -31,6 +31,28 @@ const Mutation = {
 
         return {user, jwt: token}
     },
+    edit_account_user: async (parent, args, { userId }, info) => {
+        const {id, name, tel, line_id, address, image_profile} = args
+
+        if (!userId) throw new Error ("Please login")
+
+        const user = await User.findById(id)
+
+        const updateInfo = {
+            name: !!name ? name : user.name,
+            tel: !!tel ? tel : user.tel,
+            line_id: !!line_id ? line_id : user.price,
+            address: !!address ? address : user.imageUrl,
+            image_profile: !!image_profile ? image_profile : user.imageUrl
+        }
+
+        await  User.findByIdAndUpdate(id, updateInfo)
+        const updatedUser =  await User.findById(id)
+
+        return updatedUser
+
+
+    },
     requestResetPassword: async (parent, {email}, context, info) => {
         // Find user in database
         const user = await User.findOne({email})
@@ -100,18 +122,22 @@ const Mutation = {
         
     },
     signup: async (parent, args, context, info) => {
-
         //Trim and lower case email
         const email = args.email.trim().toLowerCase()
-
+        const username = args.username.trim().toLowerCase()
         //Check if email already exist in database
         const currentUsers =  await User.find({})
         const isEmailExist = currentUsers.findIndex(user => user.email === email) > -1
-
+        const isUsernameExist = currentUsers.findIndex(user => user.username === username) > -1
+        
         if (isEmailExist) {
             throw new Error('Email already exist.')
+        }else if (isUsernameExist) {
+            throw new Error('Username already exist.')
+        } else {
+            
         }
-
+        
         //Validate password
         if(args.password.trim().length < 6) {
             throw new Error ('Password must be at least 6 characters.')
