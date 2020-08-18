@@ -11,7 +11,29 @@ const productSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
+  address: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  reason_sell: {
+    type: String,
+    trim: true
+  },
+  shipping: {
+    type: String,
+    required: true,
+    trim: true
+  },
   price: {
+    type: Number,
+    required: true
+  },
+  pd_life: {
+    type: Number,
+    required: true
+  },
+  integrity: {
     type: Number,
     required: true
   },

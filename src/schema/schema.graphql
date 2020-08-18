@@ -32,7 +32,12 @@
         createProduct(
             name: String! 
             description: String! 
-            price: Float! 
+            address: String!
+            reason_sell: String
+            shipping: String!
+            price: Float!
+            pd_life: Float!
+            integrity: Float!
             imageUrl: String!
             ): Product!
         updateProduct(
@@ -68,8 +73,13 @@
     type Product {
         id: ID!
         description: String!
+        address: String!
+        reason_sell: String
+        shipping: String!
         name: String!
         price: Float!
+        pd_life: Float!
+        integrity: Float!
         imageUrl: String!
         user: User!
         createdAt: Date!
