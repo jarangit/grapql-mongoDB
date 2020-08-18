@@ -5,12 +5,10 @@ import ProductCategory from "../models/productCategory"
 
 
 const Query = {
-  user: (parent, args, {
-    userId
-  }, info) => {
+  user: (parent, args, {userId}, info) => {
     // Check if user logged in
     if (!userId) throw new Error("Please log in")
-    console.log(userId)
+    // console.log(userId)
 
     return User.findById(userId)
       .populate({
@@ -31,6 +29,7 @@ const Query = {
         }
       })
   },
+
   users: (parent, args, context, info) => User.find({})
     .populate({
       path: "products",
@@ -50,6 +49,7 @@ const Query = {
         path: "product"
       }
     }),
+
   product: (parent, args, context, info) =>
     Product.findById(args.id).populate({
       path: "user",
@@ -57,6 +57,7 @@ const Query = {
         path: "products"
       }
     }),
+
   products: (parent, args, context, info) =>
     Product.find()
     .populate({
@@ -67,6 +68,7 @@ const Query = {
     }).sort({
       createdAt: 'desc'
     })
+
     .populate({
       path: "productCategory",
       populate: {
@@ -75,6 +77,7 @@ const Query = {
     }).sort({
       createdAt: 'desc'
     }),
+
   productCategories: (parent, args, context, info) =>
     ProductCategory.find()
     .populate({
@@ -93,6 +96,7 @@ const Query = {
     }).sort({
       createdAt: 'desc'
     }),
+
   carts: (parent, args, context, info) =>
     CartItem.find()
     .populate({
