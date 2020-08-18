@@ -6,6 +6,7 @@ import Product from '../models/product'
 import CartItem from "../models/cartItem"
 import sgMail from '@sendgrid/mail'
 import { EROFS } from 'constants'
+import ProductCategory from '../models/productCategory'
 
 
 const Mutation = {
@@ -155,22 +156,60 @@ const Mutation = {
         if (!args.name ||!args.description || !args.price || !args.imageUrl){
             throw new Error('Please provide all required fields.')
         }
-
         const product = await Product.create({...args, user: userId})
-        const user = await User.findById(userId)
-        console.log(user.products)
 
+        //เซ็คว่าลูกค้ามีสินค้านี้อยู่หรือไหม
+        const user = await User.findById(userId)
         if(!user.products){
             user.products = [product]
         } else {
             user.products.push(product)
         }
 
+
+        //เช็ค cat ว่ามีอยู่หรือไม่
+        const productCategoryID =  await ProductCategory.find({})
+        const cusProductCategoryID = productCategoryID.findIndex(productCategory => productCategory.id === args.productCategory) > -1
+        if(cusProductCategoryID === false) throw new Error ("NOT FOUND CATEGORY") 
+
+        // save data product to productCategory.products
+        const productCategory = await ProductCategory.findById(args.productCategory)
+        if(!productCategory.products){
+            productCategory.products = [product]
+        } else {
+            productCategory.products.push(product)
+        }
+       
+        await user.save()
+        await productCategory.save()
+
+        return Product.findById(product.id)
+                .populate({
+                    path: "user",
+                    populate: { path: "products" }
+                })
+    },
+    createProductCategory: async (parent, args, { userId }, info) => {
+        if (!userId) throw new Error ("Please login")
+
+        if (!args.name ||!args.description || !args.slug || !args.imageUrl){
+            throw new Error('Please provide all required fields.')
+        }
+        const productCategory = await ProductCategory.create({...args, user: userId})
+        const user = await User.findById(userId)
+        console.log(user.productCategories)
+
+        if(!user.productCategories){
+            user.productCategories = [productCategory]
+        } else {
+            user.productCategories.push(productCategory)
+        }
+
         await user.save()
 
-        return Product.findById(product.id).populate({
+        return ProductCategory.findById(productCategory.id).populate({
             path: "user",
-            populate: { path: "products" }
+            populate: { path: "productCategories" }
         })
     },
     updateProduct : async (parent, args, {userId}, info) => {

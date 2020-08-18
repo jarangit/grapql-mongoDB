@@ -50,6 +50,12 @@ const userSchema = new mongoose.Schema({
             ref: "Product"
         }
     ],
+    productCategories: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "ProductCategory"
+        }
+    ],
     createdAt: {
         type: Date,
         required: true,

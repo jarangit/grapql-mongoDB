@@ -5,6 +5,7 @@
         users: [User]!
         product(id: ID!): Product
         products: [Product]!
+        productCategories: [ProductCategory]!
         carts: [CartItem]!
     }
 
@@ -39,7 +40,14 @@
             pd_life: Float!
             integrity: Float!
             imageUrl: String!
+            productCategory: String!
             ): Product!
+        createProductCategory(
+            slug: String!
+            description: String!
+            name: String!
+            imageUrl: String!
+        ): ProductCategory!
         updateProduct(
             id: ID!
             name: String
@@ -65,6 +73,7 @@
         address: String
         image_profile: String
         # password: String!
+        productCategories: [ProductCategory]
         products: [Product]
         carts: [CartItem]!
         createdAt: Date!
@@ -82,7 +91,19 @@
         integrity: Float!
         imageUrl: String!
         user: User!
+        productCategory: ProductCategory!
         createdAt: Date!
+    }
+
+    type ProductCategory {
+        id: ID!
+        slug: String!
+        description: String!
+        name: String!
+        imageUrl: String!
+        quantity: Int!
+        products: [Product]
+        user: User!
     }
 
     type CartItem {
