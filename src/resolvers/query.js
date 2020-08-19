@@ -2,6 +2,7 @@ import User from "../models/user"
 import Product from '../models/product'
 import CartItem from "../models/cartItem"
 import ProductCategory from "../models/productCategory"
+import ProductAttribute from '../models/productAttribute'
 
 
 const Query = {
@@ -92,6 +93,25 @@ const Query = {
       path: "products",
       populate: {
         path: "productCategories"
+      }
+    }).sort({
+      createdAt: 'desc'
+    }),
+
+  productAttributes: (parent, args, context, info) =>
+    ProductAttribute.find()
+    .populate({
+      path: "user",
+      populate: {
+        path: "productAttributes"
+      }
+    }).sort({
+      createdAt: 'desc'
+    })
+    .populate({
+      path: "products",
+      populate: {
+        path: "productAttributes"
       }
     }).sort({
       createdAt: 'desc'

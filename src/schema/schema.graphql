@@ -6,6 +6,7 @@
         product(id: ID!): Product
         products: [Product]!
         productCategories: [ProductCategory]!
+        productAttributes: [ProductAttribute]!
         carts: [CartItem]!
     }
 
@@ -48,6 +49,13 @@
             name: String!
             imageUrl: String!
         ): ProductCategory!
+        createProductAttribute(
+            slug: String!
+            options: [String]!
+            description: String!
+            name: String!
+            imageUrl: String!
+        ): ProductAttribute!
         updateProduct(
             id: ID!
             name: String
@@ -99,6 +107,17 @@
         id: ID!
         slug: String!
         description: String!
+        name: String!
+        imageUrl: String!
+        quantity: Int!
+        products: [Product]
+        user: User!
+    }
+    type ProductAttribute {
+        id: ID!
+        slug: String!
+        description: String!
+        options: [String]!
         name: String!
         imageUrl: String!
         quantity: Int!

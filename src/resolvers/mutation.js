@@ -7,6 +7,7 @@ import CartItem from "../models/cartItem"
 import sgMail from '@sendgrid/mail'
 import { EROFS } from 'constants'
 import ProductCategory from '../models/productCategory'
+import ProductAttribute from '../models/productAttribute'
 
 
 const Mutation = {
@@ -208,6 +209,29 @@ const Mutation = {
         await user.save()
 
         return ProductCategory.findById(productCategory.id).populate({
+            path: "user",
+            populate: { path: "productCategories" }
+        })
+    },
+    createProductAttribute: async (parent, args, { userId }, info) => {
+        if (!userId) throw new Error ("Please login")
+
+        if (!args.name ||!args.description || !args.slug || !args.imageUrl){
+            throw new Error('Please provide all required fields.')
+        }
+        const productAttribute = await ProductAttribute.create({...args, user: userId})
+        const user = await User.findById(userId)
+        console.log(user.productCategories)
+
+        if(!user.productAttributes){
+            user.productAttributes = [productAttribute]
+        } else {
+            user.productAttributes.push(productAttribute)
+        }
+
+        await user.save()
+
+        return ProductAttribute.findById(productAttribute.id).populate({
             path: "user",
             populate: { path: "productCategories" }
         })
