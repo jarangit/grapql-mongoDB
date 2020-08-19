@@ -15,6 +15,7 @@
             email: String!,
             password: String!
         ): AuthData
+
         edit_account_user(
             id: ID!
             name: String
@@ -23,14 +24,18 @@
             address:String
             image_profile: String
         ):User
+
         requestResetPassword(email: String!): Massage!
+
         resetResetPassword(password: String!, token: String!): Massage!
+
         signup(
             username: String!,
             name: String!, 
             email: String!, 
             password: String!
             ): User
+
         createProduct(
             name: String! 
             description: String! 
@@ -43,19 +48,27 @@
             imageUrl: String!
             productCategory: String!
             ): Product!
+
         createProductCategory(
             slug: String!
             description: String!
             name: String!
             imageUrl: String!
         ): ProductCategory!
+
         createProductAttribute(
             slug: String!
-            options: [String]!
             description: String!
             name: String!
             imageUrl: String!
         ): ProductAttribute!
+
+        createOptionsAttr(
+            slug: String!
+            name: String!
+            opVal: String!
+        ): PD_options_attr!
+
         updateProduct(
             id: ID!
             name: String
@@ -63,8 +76,12 @@
             price: Float
             imageUrl: String
             ): Product!
+        
+
         addToCart(id: ID!): CartItem!
+
         deleteCart(id: ID!): CartItem!
+
         deleteProduct(id: ID!): Product!
     }
 
@@ -113,16 +130,24 @@
         products: [Product]
         user: User!
     }
+
     type ProductAttribute {
         id: ID!
         slug: String!
         description: String!
-        options: [String]!
+        options: [PD_options_attr]
         name: String!
         imageUrl: String!
         quantity: Int!
         products: [Product]
         user: User!
+    }
+
+    type PD_options_attr {
+        id: ID!
+        slug: String!
+        name: String!
+        opVal: String!
     }
 
     type CartItem {

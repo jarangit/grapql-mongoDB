@@ -8,7 +8,7 @@ import sgMail from '@sendgrid/mail'
 import { EROFS } from 'constants'
 import ProductCategory from '../models/productCategory'
 import ProductAttribute from '../models/productAttribute'
-
+import PD_options_attr from '../models/pd_options_attr'
 
 const Mutation = {
     login: async (parent, args, context, info) => {
@@ -235,6 +235,29 @@ const Mutation = {
             path: "user",
             populate: { path: "productCategories" }
         })
+    },
+    createOptionsAttr: async (parent, args, { userId }, info) => {
+        if (!userId) throw new Error ("Please login")
+        const attrId = "5f3d54f64bf47028089cfa18"
+        if (!args.name  || !args.slug || !args.opVal){
+            throw new Error('Please provide all required fields.')
+        }
+        const productAttribute = await PD_options_attr.create({...args, productAttributes: attrId})
+        const ProductAttributeID = await ProductAttribute.findById(attrId)
+        console.log(ProductAttributeID)
+        if(!ProductAttributeID){
+            ProductAttributeID = [productAttribute]
+        } else {
+            ProductAttributeID.options.push(productAttribute)
+        }
+
+        await ProductAttributeID.save()
+
+        return PD_options_attr.findById(productAttribute.id).populate({
+            path: "productAttributes",
+            populate: { path: "options" }
+        })
+        
     },
     updateProduct : async (parent, args, {userId}, info) => {
         const {id, name, description, price, imageUrl} = args

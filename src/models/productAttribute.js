@@ -16,11 +16,6 @@ const productAttributeSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
-    options: {
-        type: [String],
-        required: true,
-        trim: true
-    },
     imageUrl: {
         type: String,
         required: true,
@@ -32,6 +27,10 @@ const productAttributeSchema = new mongoose.Schema({
     products: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Product"
+    }],
+    options: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "PD_options_attr"
     }],
     user: {
         type: mongoose.Schema.Types.ObjectId,
