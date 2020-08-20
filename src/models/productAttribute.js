@@ -28,7 +28,7 @@ const productAttributeSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Product"
     }],
-    options: [{
+    pd_options_attrs: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "PD_options_attr"
     }],

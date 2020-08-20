@@ -255,17 +255,17 @@ const Mutation = {
     },
     createOptionsAttr: async (parent, args, { userId }, info) => {
         if (!userId) throw new Error ("Please login")
-        const attrId = "5f3d54f64bf47028089cfa18"
+        const attrId = "5f3e59f7374b00353833d1e9"
         if (!args.name  || !args.slug || !args.opVal){
             throw new Error('Please provide all required fields.')
         }
         const productAttribute = await PD_options_attr.create({...args, parent: attrId})
         const ProductAttributeID = await ProductAttribute.findById(attrId)
-        // console.log(ProductAttributeID)
+
         if(!ProductAttributeID){
             ProductAttributeID = [productAttribute]
         } else {
-            ProductAttributeID.options.push(productAttribute)
+            ProductAttributeID.pd_options_attrs.push(productAttribute)
         }
 
         await ProductAttributeID.save()

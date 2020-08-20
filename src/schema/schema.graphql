@@ -138,7 +138,7 @@
         id: ID!
         slug: String!
         description: String!
-        options: [PD_options_attr]
+        pd_options_attrs: [PD_options_attr]
         name: String!
         imageUrl: String!
         quantity: Int!

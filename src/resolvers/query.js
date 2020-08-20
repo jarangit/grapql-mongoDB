@@ -3,6 +3,7 @@ import Product from '../models/product'
 import CartItem from "../models/cartItem"
 import ProductCategory from "../models/productCategory"
 import ProductAttribute from '../models/productAttribute'
+import PD_options_attr from '../models/pd_options_attr'
 
 
 const Query = {
@@ -77,6 +78,14 @@ const Query = {
       }
     }).sort({
       createdAt: 'desc'
+    })
+    .populate({
+      path: "pd_options_attr",
+      populate: {
+        path: "products"
+      }
+    }).sort({
+      createdAt: 'desc'
     }),
 
   productCategories: (parent, args, context, info) =>
@@ -112,6 +121,32 @@ const Query = {
       path: "products",
       populate: {
         path: "productAttributes"
+      }
+    }).sort({
+      createdAt: 'desc'
+    })
+    .populate({
+      path: "pd_options_attrs",
+      populate: {
+        path: "productAttributes"
+      }
+    }).sort({
+      createdAt: 'desc'
+    }),
+  pd_options_attrs: (parent, args, context, info) =>
+    PD_options_attr.find()
+    .populate({
+      path: "parent",
+      populate: {
+        path: "pd_options_attrs"
+      }
+    }).sort({
+      createdAt: 'desc'
+    })
+    .populate({
+      path: "products",
+      populate: {
+        path: "pd_options_attrs"
       }
     }).sort({
       createdAt: 'desc'
