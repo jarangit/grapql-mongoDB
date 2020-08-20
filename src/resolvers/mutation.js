@@ -153,12 +153,12 @@ const Mutation = {
 
     createProduct: async (parent, args, { userId }, info) => {
         if (!userId) throw new Error ("Please login")
-
+        // console.log(args.pd_options_attr[0])
         if (!args.name ||!args.description || !args.price || !args.imageUrl){
             throw new Error('Please provide all required fields.')
         }
         const product = await Product.create({...args, user: userId})
-
+        
         //เซ็คว่าลูกค้ามีสินค้านี้อยู่หรือไหม
         const user = await User.findById(userId)
         if(!user.products){
@@ -179,10 +179,27 @@ const Mutation = {
             productCategory.products = [product]
         } else {
             productCategory.products.push(product)
-        }
-       
-        await user.save()
-        await productCategory.save()
+        }        
+
+
+        //เช็ค attr ว่ามีอยู่หรือไม่
+            args.pd_options_attr.map(async items => {
+                console.log(items)
+                        const pd_options_attrID =  await PD_options_attr.find({})
+                        const cusPD_options_attrID = pd_options_attrID.findIndex(pd_options_attr => pd_options_attr.id === items) > -1
+                        if(cusPD_options_attrID === false) throw new Error ("NOT FOUND Attr") 
+                        const pd_options_attr = await PD_options_attr.findById(items)
+                        if(!pd_options_attr.products){
+                            pd_options_attr.products = [product]
+                        } else {
+                            pd_options_attr.products.push(product)
+                        }
+                        await pd_options_attr.save()
+                    })
+
+                await productCategory.save()
+
+                await user.save()
 
         return Product.findById(product.id)
                 .populate({
@@ -221,7 +238,7 @@ const Mutation = {
         }
         const productAttribute = await ProductAttribute.create({...args, user: userId})
         const user = await User.findById(userId)
-        console.log(user.productCategories)
+        console.log(user.productAttributes)
 
         if(!user.productAttributes){
             user.productAttributes = [productAttribute]
@@ -233,7 +250,7 @@ const Mutation = {
 
         return ProductAttribute.findById(productAttribute.id).populate({
             path: "user",
-            populate: { path: "productCategories" }
+            populate: { path: "productAttributes" }
         })
     },
     createOptionsAttr: async (parent, args, { userId }, info) => {
@@ -242,9 +259,9 @@ const Mutation = {
         if (!args.name  || !args.slug || !args.opVal){
             throw new Error('Please provide all required fields.')
         }
-        const productAttribute = await PD_options_attr.create({...args, productAttributes: attrId})
+        const productAttribute = await PD_options_attr.create({...args, parent: attrId})
         const ProductAttributeID = await ProductAttribute.findById(attrId)
-        console.log(ProductAttributeID)
+        // console.log(ProductAttributeID)
         if(!ProductAttributeID){
             ProductAttributeID = [productAttribute]
         } else {
@@ -252,10 +269,10 @@ const Mutation = {
         }
 
         await ProductAttributeID.save()
-
+        console.log(productAttribute)
         return PD_options_attr.findById(productAttribute.id).populate({
-            path: "productAttributes",
-            populate: { path: "options" }
+            path: "parent",
+            populate: { path: "pd_options_attrs" }
         })
         
     },

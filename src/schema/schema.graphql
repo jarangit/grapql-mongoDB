@@ -7,6 +7,7 @@
         products: [Product]!
         productCategories: [ProductCategory]!
         productAttributes: [ProductAttribute]!
+        pd_options_attrs: [PD_options_attr]!
         carts: [CartItem]!
     }
 
@@ -47,6 +48,7 @@
             integrity: Float!
             imageUrl: String!
             productCategory: String!
+            pd_options_attr: [String]
             ): Product!
 
         createProductCategory(
@@ -117,6 +119,7 @@
         imageUrl: String!
         user: User!
         productCategory: ProductCategory!
+        pd_options_attr: [PD_options_attr]!
         createdAt: Date!
     }
 
@@ -148,6 +151,8 @@
         slug: String!
         name: String!
         opVal: String!
+        parent: ProductAttribute!
+        products: [Product]
     }
 
     type CartItem {

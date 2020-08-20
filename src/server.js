@@ -19,7 +19,7 @@ const server = new ApolloServer({
 
         //Extract userId from token
         const userId = getUser(token)
-        console.log(userId)
+        // console.log(userId)
         return { userId }
     }
 })

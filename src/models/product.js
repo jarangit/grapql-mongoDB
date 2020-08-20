@@ -52,6 +52,12 @@ const productSchema = new mongoose.Schema({
     ref: "ProductCategory",
     required: true
   },
+  pd_options_attr: [
+    {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "PD_options_attr"
+    }
+  ],
   createdAt: {
     type: Date,
     required: true,

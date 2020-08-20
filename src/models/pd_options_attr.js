@@ -1,6 +1,6 @@
 import mongoose from "mongoose"
 
-const PD_options_attrSchema = new mongoose.Schema({
+const pd_options_attrSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
@@ -20,6 +20,11 @@ const PD_options_attrSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Product"
     }],
+    parent: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "ProductAttribute",
+        required: true
+    },
     createdAt: {
         type: Date,
         required: true,
@@ -27,6 +32,6 @@ const PD_options_attrSchema = new mongoose.Schema({
     }
 })
 
-const PD_options_attr = mongoose.model("PD_options_attr", PD_options_attrSchema)
+const PD_options_attr = mongoose.model("PD_options_attr", pd_options_attrSchema)
 
 export default PD_options_attr
