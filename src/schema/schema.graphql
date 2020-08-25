@@ -151,7 +151,7 @@
         slug: String!
         name: String!
         opVal: String!
-        parent: ProductAttribute!
+        parent: ProductAttribute
         products: [Product]
     }
 

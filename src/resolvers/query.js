@@ -58,6 +58,22 @@ const Query = {
       populate: {
         path: "products"
       }
+    })
+    .populate({
+      path: "productCategory",
+      populate: {
+        path: "products"
+      }
+    }).sort({
+      createdAt: 'desc'
+    })
+    .populate({
+      path: "pd_options_attr",
+      populate: {
+        path: "products"
+      }
+    }).sort({
+      createdAt: 'desc'
     }),
 
   products: (parent, args, context, info) =>
