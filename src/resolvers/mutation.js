@@ -259,7 +259,9 @@ const Mutation = {
         if (!args.name  || !args.slug || !args.opVal){
             throw new Error('Please provide all required fields.')
         }
-        const productAttribute = await PD_options_attr.create({...args, parent: attrId})
+        const {name, slug, opVal} = args
+        const parentAttrName = await ProductAttribute.findById(attrId)
+        const productAttribute = await PD_options_attr.create({name, slug, opVal, parentName: parentAttrName.name, parent: attrId})
         const ProductAttributeID = await ProductAttribute.findById(attrId)
 
         if(!ProductAttributeID){
@@ -274,7 +276,6 @@ const Mutation = {
             path: "parent",
             populate: { path: "pd_options_attrs" }
         })
-        
     },
     updateProduct : async (parent, args, {userId}, info) => {
         const {id, name, description, price, imageUrl} = args

@@ -16,6 +16,11 @@ const pd_options_attrSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
+    parentName: {
+        type: String,
+        required: true,
+        trim: true
+    },
     products: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Product"
