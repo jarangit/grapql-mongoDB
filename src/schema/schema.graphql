@@ -6,6 +6,7 @@
         product(id: ID!): Product
         products: [Product]!
         productCategories: [ProductCategory]!
+        productCategory(id: ID!): ProductCategory
         productAttributes: [ProductAttribute]!
         pd_options_attrs: [PD_options_attr]!
         carts: [CartItem]!
@@ -42,11 +43,12 @@
             description: String! 
             address: String!
             reason_sell: String
-            shipping: String!
+            shipping: [String]
             price: Float!
             pd_life: Float!
             integrity: Float!
             imageUrl: String!
+            image_gallery: [String]
             productCategory: String!
             pd_options_attr: [String]
             ): Product!
@@ -75,8 +77,16 @@
             id: ID!
             name: String
             description: String
+            address: String
+            reason_sell: String
+            shipping: [String]
             price: Float
+            pd_life: Float
+            integrity: Float
             imageUrl: String
+            image_gallery: [String]
+            productCategory: String
+            pd_options_attr: [String]
             ): Product!
         
 
@@ -111,12 +121,13 @@
         description: String!
         address: String!
         reason_sell: String
-        shipping: String!
+        shipping: [String]
         name: String!
         price: Float!
         pd_life: Float!
         integrity: Float!
         imageUrl: String!
+        image_gallery: [String]
         user: User!
         productCategory: ProductCategory!
         pd_options_attr: [PD_options_attr]!

@@ -8,7 +8,6 @@ import { facebookAuth } from './utils/socilProvidersAuth'
 dotenv.config()
 
 
-
 //เรียกค่าที่เก็บไว้ในไฟล .env มาใช้งาน
 const { DB_USER, DB_PASSWORD, DB_NAME, PORT } = process.env
 facebookPassportConfig()
