@@ -175,7 +175,7 @@ const Query = {
       .populate({
         path: "pd_options_attrs",
         populate: {
-          path: "productAttributes",
+          path: "products",
         },
       })
       .sort({
