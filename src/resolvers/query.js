@@ -6,7 +6,9 @@ import ProductAttribute from "../models/productAttribute";
 import PD_options_attr from "../models/pd_options_attr";
 
 const Query = {
-  user: (parent, args, { userId }, info) => {
+  user: (parent, args, {
+    userId
+  }, info) => {
     // Check if user logged in
     if (!userId) throw new Error("Please log in");
     // console.log(userId)
@@ -33,195 +35,231 @@ const Query = {
 
   users: (parent, args, context, info) =>
     User.find({})
-      .populate({
-        path: "products",
-        populate: {
-          path: "user",
-        },
-      })
-      .populate({
-        path: "productCategories",
-        populate: {
-          path: "user",
-        },
-      })
-      .populate({
-        path: "carts",
-        populate: {
-          path: "product",
-        },
-      }),
+    .populate({
+      path: "products",
+      populate: {
+        path: "user",
+      },
+    })
+    .populate({
+      path: "productCategories",
+      populate: {
+        path: "user",
+      },
+    })
+    .populate({
+      path: "carts",
+      populate: {
+        path: "product",
+      },
+    }),
 
   product: (parent, args, context, info) =>
     Product.findById(args.id)
-      .populate({
-        path: "user",
-        populate: {
-          path: "products",
-        },
-      })
-      .populate({
-        path: "productCategory",
-        populate: {
-          path: "products",
-        },
-      })
-      .sort({
-        createdAt: "desc",
-      })
-      .populate({
-        path: "pd_options_attr",
-        populate: {
-          path: "products",
-        },
-      })
-      .sort({
-        createdAt: "desc",
-      }),
+    .populate({
+      path: "user",
+      populate: {
+        path: "products",
+      },
+    })
+    .populate({
+      path: "productCategory",
+      populate: {
+        path: "products",
+      },
+    })
+    .sort({
+      createdAt: "desc",
+    })
+    .populate({
+      path: "pd_options_attr",
+      populate: {
+        path: "products",
+      },
+    })
+    .sort({
+      createdAt: "desc",
+    }),
 
   products: (parent, args, context, info) =>
     Product.find()
-      .populate({
-        path: "user",
-        populate: {
-          path: "products",
-        },
-      })
-      .sort({
-        createdAt: "desc",
-      })
+    .populate({
+      path: "user",
+      populate: {
+        path: "products",
+      },
+    })
+    .sort({
+      createdAt: "desc",
+    })
 
-      .populate({
-        path: "productCategory",
-        populate: {
-          path: "products",
-        },
-      })
-      .sort({
-        createdAt: "desc",
-      })
-      .populate({
-        path: "pd_options_attr",
-        populate: {
-          path: "products",
-        },
-      })
-      .sort({
-        createdAt: "desc",
-      }),
+    .populate({
+      path: "productCategory",
+      populate: {
+        path: "products",
+      },
+    })
+    .sort({
+      createdAt: "desc",
+    })
+    .populate({
+      path: "pd_options_attr",
+      populate: {
+        path: "products",
+      },
+    })
+    .sort({
+      createdAt: "desc",
+    }),
 
   productCategory: (parent, args, context, info) =>
     ProductCategory.findById(args.id)
-      .populate({
-        path: "user",
-        populate: {
-          path: "productCategories",
-        },
-      })
-      .sort({
-        createdAt: "desc",
-      })
-      .populate({
-        path: "products",
-        populate: {
-          path: "productCategories",
-        },
-      })
-      .sort({
-        createdAt: "desc",
-      }),
-      
+    .populate({
+      path: "user",
+      populate: {
+        path: "productCategories",
+      },
+    })
+    .sort({
+      createdAt: "desc",
+    })
+    .populate({
+      path: "products",
+      populate: {
+        path: "productCategories",
+      },
+    })
+    .sort({
+      createdAt: "desc",
+    }),
+
   productCategories: (parent, args, context, info) =>
     ProductCategory.find()
-      .populate({
-        path: "user",
-        populate: {
-          path: "productCategories",
-        },
-      })
-      .sort({
-        createdAt: "desc",
-      })
-      .populate({
-        path: "products",
-        populate: {
-          path: "productCategories",
-        },
-      })
-      .sort({
-        createdAt: "desc",
-      }),
+    .populate({
+      path: "user",
+      populate: {
+        path: "productCategories",
+      },
+    })
+    .sort({
+      createdAt: "desc",
+    })
+    .populate({
+      path: "products",
+      populate: {
+        path: "productCategories",
+      },
+    })
+    .sort({
+      createdAt: "desc",
+    }),
 
   productAttributes: (parent, args, context, info) =>
     ProductAttribute.find()
-      .populate({
-        path: "user",
-        populate: {
-          path: "productAttributes",
-        },
-      })
-      .sort({
-        createdAt: "desc",
-      })
-      .populate({
+    .populate({
+      path: "user",
+      populate: {
+        path: "productAttributes",
+      },
+    })
+    .sort({
+      createdAt: "desc",
+    })
+    .populate({
+      path: "products",
+      populate: {
+        path: "productAttributes",
+      },
+    })
+    .sort({
+      createdAt: "desc",
+    })
+    .populate({
+      path: "pd_options_attrs",
+      populate: {
         path: "products",
-        populate: {
-          path: "productAttributes",
-        },
-      })
-      .sort({
-        createdAt: "desc",
-      })
-      .populate({
-        path: "pd_options_attrs",
-        populate: {
-          path: "products",
-        },
-      })
-      .sort({
-        createdAt: "desc",
-      }),
+      },
+    })
+    .sort({
+      createdAt: "desc",
+    }),
   pd_options_attrs: (parent, args, context, info) =>
     PD_options_attr.find()
-      .populate({
-        path: "parent",
-        populate: {
-          path: "pd_options_attrs",
-        },
-      })
-      .sort({
-        createdAt: "desc",
-      })
-      .populate({
-        path: "products",
-        populate: {
-          path: "pd_options_attrs",
-        },
-      })
-      .sort({
-        createdAt: "desc",
-      }),
+    .populate({
+      path: "parent",
+      populate: {
+        path: "pd_options_attrs",
+      },
+    })
+    .sort({
+      createdAt: "desc",
+    })
+    .populate({
+      path: "products",
+      populate: {
+        path: "pd_options_attrs",
+      },
+    })
+    .sort({
+      createdAt: "desc",
+    }),
 
   carts: (parent, args, context, info) =>
     CartItem.find()
-      .populate({
-        path: "user",
-        populate: {
-          path: "carts",
-        },
-      })
-      .sort({
-        createdAt: "desc",
-      })
-      .populate({
-        path: "product",
-        populate: {
-          path: "carts",
-        },
-      })
-      .sort({
-        createdAt: "desc",
-      }),
+    .populate({
+      path: "user",
+      populate: {
+        path: "carts",
+      },
+    })
+    .sort({
+      createdAt: "desc",
+    })
+    .populate({
+      path: "product",
+      populate: {
+        path: "carts",
+      },
+    })
+    .sort({
+      createdAt: "desc",
+    }),
+  filterProducts: async (parent, args, context, info) => {
+    const {
+      search = null, page = 1, limit = 20
+    } = args;
+
+    let searchQuery = {};
+
+    // run if search is provided
+    if (search) {
+      // update the search query
+      searchQuery = {
+        $or: [{
+          name: {
+            $regex: search,
+            $options: 'i'
+          }
+        }, ]
+      };
+    }
+
+    // execute query to search users
+    const product = await Product.find(searchQuery)
+      // .limit(limit)
+      // .skip((page - 1) * limit)
+      // .lean();
+
+    // get total documents
+    const count = await Product.countDocuments(searchQuery);
+
+    return {
+      products: product,
+      total: count,
+      currentPage: page
+    }
+  }
+
 };
 
 export default Query;

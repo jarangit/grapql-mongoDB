@@ -10,6 +10,8 @@
         productAttributes: [ProductAttribute]!
         pd_options_attrs: [PD_options_attr]!
         carts: [CartItem]!
+        filterProducts(search: String, page: Float, limit: Float): filterProducts
+
     }
 
     type Mutation {
@@ -181,4 +183,10 @@
     }
     type Massage {
         message: String!
+    }
+
+    type filterProducts {
+        products: [Product]
+        total: Float
+        curentPage: Float
     }
