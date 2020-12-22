@@ -251,7 +251,7 @@ const Query = {
       // .lean();
 
     // get total documents
-    const count = await Product.countDocuments(searchQuery);
+    const count = await Product.countDocuments();
 
     return {
       products: product,

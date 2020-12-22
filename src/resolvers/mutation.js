@@ -1,11 +1,15 @@
-import { randomBytes } from "crypto";
+import {
+  randomBytes
+} from "crypto";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/user";
 import Product from "../models/product";
 import CartItem from "../models/cartItem";
 import sgMail from "@sendgrid/mail";
-import { EROFS } from "constants";
+import {
+  EROFS
+} from "constants";
 import ProductCategory from "../models/productCategory";
 import ProductAttribute from "../models/productAttribute";
 import PD_options_attr from "../models/pd_options_attr";
@@ -13,15 +17,27 @@ import mongoose from "mongoose";
 
 const Mutation = {
   login: async (parent, args, context, info) => {
-    const { email, password } = args;
+    const {
+      email,
+      password
+    } = args;
 
     //Find user in database
-    const user = await User.findOne({ email })
+    const user = await User.findOne({
+        email
+      })
       .populate({
         path: "products",
-        populate: { path: "user" },
+        populate: {
+          path: "user"
+        },
       })
-      .populate({ path: "carts", populate: { path: "product" } });
+      .populate({
+        path: "carts",
+        populate: {
+          path: "product"
+        }
+      });
 
     if (!user) throw new Error("Email not found, please sing up.");
 
@@ -30,14 +46,28 @@ const Mutation = {
 
     if (!validPassword) throw new Error("Invalid email or password.");
 
-    const token = jwt.sign({ userId: user.id }, process.env.SECRET, {
+    const token = jwt.sign({
+      userId: user.id
+    }, process.env.SECRET, {
       expiresIn: "7day",
     });
 
-    return { user, jwt: token };
+    return {
+      user,
+      jwt: token
+    };
   },
-  edit_account_user: async (parent, args, { userId }, info) => {
-    const { id, name, tel, line_id, address, image_profile } = args;
+  edit_account_user: async (parent, args, {
+    userId
+  }, info) => {
+    const {
+      id,
+      name,
+      tel,
+      line_id,
+      address,
+      image_profile
+    } = args;
 
     if (!userId) throw new Error("Please login");
 
@@ -56,9 +86,13 @@ const Mutation = {
 
     return updatedUser;
   },
-  requestResetPassword: async (parent, { email }, context, info) => {
+  requestResetPassword: async (parent, {
+    email
+  }, context, info) => {
     // Find user in database
-    const user = await User.findOne({ email });
+    const user = await User.findOne({
+      email
+    });
 
     //2. If not found user the throw error
     if (!user) throw Error("Email not found");
@@ -97,11 +131,18 @@ const Mutation = {
         console.log(error.response.body);
         console.log(error.response.body.errors[0].message);
       });
-    return { message: "Check your email" };
+    return {
+      message: "Check your email"
+    };
   },
-  resetResetPassword: async (parent, { password, token }, context, info) => {
+  resetResetPassword: async (parent, {
+    password,
+    token
+  }, context, info) => {
     // Find user in database by reset token
-    const user = await User.findOne({ resetPasswordToken: token });
+    const user = await User.findOne({
+      resetPasswordToken: token
+    });
 
     // If can't found user throw error
     if (!user) throw Error("NOT FOUND USER");
@@ -140,8 +181,7 @@ const Mutation = {
       throw new Error("Email already exist.");
     } else if (isUsernameExist) {
       throw new Error("Username already exist.");
-    } else {
-    }
+    } else {}
 
     //Validate password
     if (args.password.trim().length < 6) {
@@ -151,16 +191,25 @@ const Mutation = {
     //Hash password
     const password = await bcrypt.hash(args.password, 10);
 
-    return User.create({ ...args, email, password });
+    return User.create({
+      ...args,
+      email,
+      password
+    });
   },
 
-  createProduct: async (parent, args, { userId }, info) => {
+  createProduct: async (parent, args, {
+    userId
+  }, info) => {
     if (!userId) throw new Error("Please login");
     // console.log(args.pd_options_attr[0])
     if (!args.name || !args.description || !args.price || !args.imageUrl) {
       throw new Error("Please provide all required fields.");
     }
-    const product = await Product.create({ ...args, user: userId });
+    const product = await Product.create({
+      ...args,
+      user: userId
+    });
 
     //เซ็คว่าลูกค้ามีสินค้านี้อยู่หรือไหม
     const user = await User.findById(userId);
@@ -170,6 +219,15 @@ const Mutation = {
       user.products.push(product);
     }
 
+    //เพิ่มจำนวนสินค้าของ user
+    const qtyPd = await user.products.length
+    console.log(user.products.length);
+    const updateInfo = {
+      qtyProducts: !!qtyPd ? qtyPd : user.qtyProducts,
+    };
+    await User.findByIdAndUpdate(userId, updateInfo);
+
+    
     //เช็ค cat ว่ามีอยู่หรือไม่
     const productCategoryID = await ProductCategory.find({});
     const cusProductCategoryID =
@@ -212,10 +270,14 @@ const Mutation = {
 
     return Product.findById(product.id).populate({
       path: "user",
-      populate: { path: "products" },
+      populate: {
+        path: "products"
+      },
     });
   },
-  createProductCategory: async (parent, args, { userId }, info) => {
+  createProductCategory: async (parent, args, {
+    userId
+  }, info) => {
     if (!userId) throw new Error("Please login");
 
     if (!args.name || !args.description || !args.slug || !args.imageUrl) {
@@ -238,10 +300,14 @@ const Mutation = {
 
     return ProductCategory.findById(productCategory.id).populate({
       path: "user",
-      populate: { path: "productCategories" },
+      populate: {
+        path: "productCategories"
+      },
     });
   },
-  createProductAttribute: async (parent, args, { userId }, info) => {
+  createProductAttribute: async (parent, args, {
+    userId
+  }, info) => {
     if (!userId) throw new Error("Please login");
 
     if (!args.name || !args.description || !args.slug || !args.imageUrl) {
@@ -264,16 +330,24 @@ const Mutation = {
 
     return ProductAttribute.findById(productAttribute.id).populate({
       path: "user",
-      populate: { path: "productAttributes" },
+      populate: {
+        path: "productAttributes"
+      },
     });
   },
-  createOptionsAttr: async (parent, args, { userId }, info) => {
+  createOptionsAttr: async (parent, args, {
+    userId
+  }, info) => {
     if (!userId) throw new Error("Please login");
     const attrId = "5f3e5511639b9e19205c04e4";
     if (!args.name || !args.slug || !args.opVal) {
       throw new Error("Please provide all required fields.");
     }
-    const { name, slug, opVal } = args;
+    const {
+      name,
+      slug,
+      opVal
+    } = args;
     const parentAttrName = await ProductAttribute.findById(attrId);
     const productAttribute = await PD_options_attr.create({
       name,
@@ -294,10 +368,14 @@ const Mutation = {
     console.log(productAttribute);
     return PD_options_attr.findById(productAttribute.id).populate({
       path: "parent",
-      populate: { path: "pd_options_attrs" },
+      populate: {
+        path: "pd_options_attrs"
+      },
     });
   },
-  updateProduct: async (parent, args, { userId }, info) => {
+  updateProduct: async (parent, args, {
+    userId
+  }, info) => {
     const {
       id,
       name,
@@ -336,7 +414,7 @@ const Mutation = {
           (productId) => productId.toString() !== id.toString()
         );
 
-        console.log( 'filter'+DataCatPro);
+        console.log('filter' + DataCatPro);
         console.log(id);
         const updateIdProCat = {
           products: !!DataCatPro ? DataCatPro : DataCat.products,
@@ -355,7 +433,7 @@ const Mutation = {
         const findProNewCat = findCategory.products.findIndex(
           (productID) => productID === id
         );
-        console.log('finpronewcat = '+findProNewCat);
+        console.log('finpronewcat = ' + findProNewCat);
         if (findProNewCat > -1) {
           ''
         } else {
@@ -365,7 +443,7 @@ const Mutation = {
         console.log('Added');
 
       } catch (error) {}
-      
+
 
       console.log("complete");
     }
@@ -382,12 +460,12 @@ const Mutation = {
       shipping: !!shipping ? shipping : product.shipping,
       pd_life: !!pd_life ? pd_life : product.pd_life,
       integrity: !!integrity ? integrity : product.integrity,
-      productCategory: !!productCategory
-        ? productCategory
-        : product.productCategory,
-      pd_options_attr: !!pd_options_attr
-        ? pd_options_attr
-        : product.pd_options_attr,
+      productCategory: !!productCategory ?
+        productCategory :
+        product.productCategory,
+      pd_options_attr: !!pd_options_attr ?
+        pd_options_attr :
+        product.pd_options_attr,
     };
 
     //Update product in database
@@ -400,8 +478,12 @@ const Mutation = {
 
     return updatedProduct;
   },
-  deleteProduct: async (parent, args, { userId }, info) => {
-    const { id } = args;
+  deleteProduct: async (parent, args, {
+    userId
+  }, info) => {
+    const {
+      id
+    } = args;
     if (!userId) throw new Error("Please login");
 
     const product = await Product.findById(id);
@@ -417,13 +499,19 @@ const Mutation = {
       (productId) => productId.toString() !== deletedProduct.id.toString()
     );
 
-    await User.findByIdAndUpdate(userId, { products: updatedUserProduct });
+    await User.findByIdAndUpdate(userId, {
+      products: updatedUserProduct
+    });
 
     return deletedProduct;
   },
-  addToCart: async (parent, args, { userId }, info) => {
+  addToCart: async (parent, args, {
+    userId
+  }, info) => {
     //this id is  productId
-    const { id } = args;
+    const {
+      id
+    } = args;
     if (!userId) throw new Error("Please login");
 
     try {
@@ -432,7 +520,9 @@ const Mutation = {
       //เช็คว่ามีการเพิ่มสินค้าหรือยัง
       const user = await User.findById(userId).populate({
         path: "carts",
-        populate: { path: "product" },
+        populate: {
+          path: "product"
+        },
       });
 
       const findCartItemIndex = user.carts.findIndex(
@@ -449,10 +539,14 @@ const Mutation = {
         });
         // A.2 Update quantity od that cartItem ---> increase
         const updatedCartItem = await CartItem.findById(
-          user.carts[findCartItemIndex].id
-        )
-          .populate({ path: "product" })
-          .populate({ path: "user" });
+            user.carts[findCartItemIndex].id
+          )
+          .populate({
+            path: "product"
+          })
+          .populate({
+            path: "user"
+          });
 
         return updatedCartItem;
       } else {
@@ -465,8 +559,12 @@ const Mutation = {
         });
         // find new cartItem
         const newCartItem = await CartItem.findById(cartItem.id)
-          .populate({ path: "product" })
-          .populate({ path: "user" });
+          .populate({
+            path: "product"
+          })
+          .populate({
+            path: "user"
+          });
         // B.2 Update user.carts
         await User.findByIdAndUpdate(userId, {
           carts: [...user.carts, newCartItem],
@@ -478,8 +576,12 @@ const Mutation = {
       console.log(error);
     }
   },
-  deleteCart: async (parent, args, { userId }, info) => {
-    const { id } = args;
+  deleteCart: async (parent, args, {
+    userId
+  }, info) => {
+    const {
+      id
+    } = args;
     if (!userId) throw new Error("Please login");
 
     // Find cart from give id
@@ -502,7 +604,9 @@ const Mutation = {
     const updatedUserCart = user.carts.filter(
       (cartId) => cartId.toString() !== deletedCart.id.toString()
     );
-    await User.findByIdAndUpdate(userId, { carts: updatedUserCart });
+    await User.findByIdAndUpdate(userId, {
+      carts: updatedUserCart
+    });
 
     return deletedCart;
   },

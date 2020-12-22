@@ -38,6 +38,9 @@ const userSchema = new mongoose.Schema({
     resetTokenExpiry: {
         type: Number
     },
+    qtyProducts: {
+        type: Number
+    },
     carts: [
         {
           type: mongoose.Schema.Types.ObjectId,

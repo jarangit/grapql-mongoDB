@@ -11,7 +11,7 @@
         pd_options_attrs: [PD_options_attr]!
         carts: [CartItem]!
         filterProducts(search: String, page: Float, limit: Float): filterProducts
-
+        
     }
 
     type Mutation {
@@ -107,11 +107,12 @@
         username: String!
         name: String!
         email: String!
-        tel: String
+        tel: String 
         line_id: String
         address: String
         image_profile: String
         # password: String!
+        qtyProducts: String
         productCategories: [ProductCategory]
         products: [Product]
         carts: [CartItem]!
