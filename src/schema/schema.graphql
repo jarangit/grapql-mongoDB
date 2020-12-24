@@ -1,193 +1,188 @@
-
 # คือการเขียน schema อีกวิธีนึง
-    type Query {
-        user: User
-        users: [User]!
-        product(id: ID!): Product
-        products: [Product]!
-        productCategories: [ProductCategory]!
-        productCategory(id: ID!): ProductCategory
-        productAttributes: [ProductAttribute]!
-        pd_options_attrs: [PD_options_attr]!
-        carts: [CartItem]!
-        filterProducts(search: String, page: Float, limit: Float): filterProducts
-        
-    }
+type Query {
+  user: User
+  users: [User]!
+  product(id: ID!): Product
+  products: [Product]!
+  productCategories: [ProductCategory]!
+  productCategory(id: ID!): ProductCategory
+  productAttributes: [ProductAttribute]!
+  pd_options_attrs: [PD_options_attr]!
+  carts: [CartItem]!
+  filterProducts(search: String, page: Float, limit: Float): filterProducts
+}
 
-    type Mutation {
-        login(
-            email: String!,
-            password: String!
-        ): AuthData
+type Mutation {
+  login(email: String!, password: String!): AuthData
 
-        edit_account_user(
-            id: ID!
-            name: String
-            tel: String
-            line_id: String
-            address:String
-            image_profile: String
-        ):User
+  edit_account_user(
+    id: ID!
+    name: String
+    tel: String
+    line_id: String
+    address: String
+    image_profile: String
+  ): User
 
-        requestResetPassword(email: String!): Massage!
+  requestResetPassword(email: String!): Massage!
 
-        resetResetPassword(password: String!, token: String!): Massage!
+  resetResetPassword(password: String!, token: String!): Massage!
 
-        signup(
-            username: String!,
-            name: String!, 
-            email: String!, 
-            password: String!
-            ): User
+  signup(
+    username: String!
+    name: String!
+    email: String!
+    password: String!
+  ): User
 
-        createProduct(
-            name: String! 
-            description: String! 
-            address: String!
-            reason_sell: String
-            shipping: [String]
-            price: Float!
-            pd_life: Float!
-            integrity: Float!
-            imageUrl: String!
-            image_gallery: [String]
-            productCategory: String!
-            pd_options_attr: [String]
-            ): Product!
+  createProduct(
+    name: String!
+    description: String!
+    address: String!
+    reason_sell: String
+    shipping: [String]
+    price: Float!
+    pd_life: Float!
+    integrity: Float!
+    imageUrl: String!
+    image_gallery: [String]
+    productCategory: String!
+    pd_options_attr: [String]
+  ): Product!
 
-        createProductCategory(
-            slug: String!
-            description: String!
-            name: String!
-            imageUrl: String!
-        ): ProductCategory!
+  createProductCategory(
+    slug: String!
+    description: String!
+    name: String!
+    imageUrl: String!
+  ): ProductCategory!
 
-        createProductAttribute(
-            slug: String!
-            description: String!
-            name: String!
-            imageUrl: String!
-        ): ProductAttribute!
+  createProductAttribute(
+    slug: String!
+    description: String!
+    name: String!
+    imageUrl: String!
+  ): ProductAttribute!
 
-        createOptionsAttr(
-            slug: String!
-            name: String!
-            opVal: String!
-        ): PD_options_attr!
+  createOptionsAttr(
+    slug: String!
+    name: String!
+    opVal: String!
+  ): PD_options_attr!
 
-        updateProduct(
-            id: ID!
-            name: String
-            description: String
-            address: String
-            reason_sell: String
-            shipping: [String]
-            price: Float
-            pd_life: Float
-            integrity: Float
-            imageUrl: String
-            image_gallery: [String]
-            productCategory: String
-            pd_options_attr: [String]
-            ): Product!
-        
+  updateProduct(
+    id: ID!
+    name: String
+    description: String
+    address: String
+    reason_sell: String
+    shipping: [String]
+    price: Float
+    pd_life: Float
+    integrity: Float
+    imageUrl: String
+    image_gallery: [String]
+    productCategory: String
+    pd_options_attr: [String]
+  ): Product!
 
-        addToCart(id: ID!): CartItem!
+  addToCart(id: ID!): CartItem!
 
-        deleteCart(id: ID!): CartItem!
+  deleteCart(id: ID!): CartItem!
 
-        deleteProduct(id: ID!): Product!
-    }
+  deleteProduct(id: ID!): Product!
+}
 
+scalar Date
 
-    scalar Date
+type User {
+  id: ID!
+  username: String!
+  name: String!
+  email: String!
+  tel: String
+  line_id: String
+  address: String
+  image_profile: String
+  # password: String!
+  qtyProducts: Float
+  qty_Fav_PD: Float
+  productCategories: [ProductCategory]
+  products: [Product]
+  carts: [CartItem]!
+  createdAt: Date!
+}
 
-    type User {
-        id: ID!
-        username: String!
-        name: String!
-        email: String!
-        tel: String 
-        line_id: String
-        address: String
-        image_profile: String
-        # password: String!
-        qtyProducts: String
-        productCategories: [ProductCategory]
-        products: [Product]
-        carts: [CartItem]!
-        createdAt: Date!
-    }
+type Product {
+  id: ID!
+  description: String!
+  address: String!
+  reason_sell: String
+  shipping: [String]
+  name: String!
+  price: Float!
+  pd_life: Float!
+  integrity: Float!
+  imageUrl: String!
+  image_gallery: [String]
+  user: User!
+  productCategory: ProductCategory!
+  pd_options_attr: [PD_options_attr]!
+  createdAt: Date!
+}
 
-    type Product {
-        id: ID!
-        description: String!
-        address: String!
-        reason_sell: String
-        shipping: [String]
-        name: String!
-        price: Float!
-        pd_life: Float!
-        integrity: Float!
-        imageUrl: String!
-        image_gallery: [String]
-        user: User!
-        productCategory: ProductCategory!
-        pd_options_attr: [PD_options_attr]!
-        createdAt: Date!
-    }
+type ProductCategory {
+  id: ID!
+  slug: String!
+  description: String!
+  name: String!
+  imageUrl: String!
+  quantity: Float
+  products: [Product]
+  user: User!
+}
 
-    type ProductCategory {
-        id: ID!
-        slug: String!
-        description: String!
-        name: String!
-        imageUrl: String!
-        quantity: Int!
-        products: [Product]
-        user: User!
-    }
+type ProductAttribute {
+  id: ID!
+  slug: String!
+  description: String!
+  pd_options_attrs: [PD_options_attr]
+  name: String!
+  imageUrl: String!
+  quantity: Int!
+  products: [Product]
+  user: User!
+}
 
-    type ProductAttribute {
-        id: ID!
-        slug: String!
-        description: String!
-        pd_options_attrs: [PD_options_attr]
-        name: String!
-        imageUrl: String!
-        quantity: Int!
-        products: [Product]
-        user: User!
-    }
+type PD_options_attr {
+  id: ID!
+  slug: String!
+  name: String!
+  opVal: String!
+  quantity: Float
+  parentName: String!
+  parent: ProductAttribute
+  products: [Product]
+}
 
-    type PD_options_attr {
-        id: ID!
-        slug: String!
-        name: String!
-        opVal: String!
-        parentName: String!
-        parent: ProductAttribute
-        products: [Product]
-    }
+type CartItem {
+  id: ID!
+  product: Product!
+  quantity: Int!
+  user: User!
+  createdAt: Date!
+}
 
-    type CartItem {
-        id: ID!
-        product: Product!
-        quantity: Int!
-        user: User!
-        createdAt: Date!
-    }
+type AuthData {
+  user: User
+  jwt: String
+}
+type Massage {
+  message: String!
+}
 
-    type AuthData {
-        user: User
-        jwt: String
-    }
-    type Massage {
-        message: String!
-    }
-
-    type filterProducts {
-        products: [Product]
-        total: Float
-        curentPage: Float
-    }
+type filterProducts {
+  products: [Product]
+  total: Float
+  curentPage: Float
+}

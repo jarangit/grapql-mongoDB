@@ -41,6 +41,9 @@ const userSchema = new mongoose.Schema({
     qtyProducts: {
         type: Number
     },
+    qty_Fav_PD: {
+        type: Number
+    },
     carts: [
         {
           type: mongoose.Schema.Types.ObjectId,

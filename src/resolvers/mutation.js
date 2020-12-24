@@ -1,15 +1,11 @@
-import {
-  randomBytes
-} from "crypto";
+import { randomBytes } from "crypto";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/user";
 import Product from "../models/product";
 import CartItem from "../models/cartItem";
 import sgMail from "@sendgrid/mail";
-import {
-  EROFS
-} from "constants";
+import { EROFS } from "constants";
 import ProductCategory from "../models/productCategory";
 import ProductAttribute from "../models/productAttribute";
 import PD_options_attr from "../models/pd_options_attr";
@@ -17,26 +13,23 @@ import mongoose from "mongoose";
 
 const Mutation = {
   login: async (parent, args, context, info) => {
-    const {
-      email,
-      password
-    } = args;
+    const { email, password } = args;
 
     //Find user in database
     const user = await User.findOne({
-        email
-      })
+      email,
+    })
       .populate({
         path: "products",
         populate: {
-          path: "user"
+          path: "user",
         },
       })
       .populate({
         path: "carts",
         populate: {
-          path: "product"
-        }
+          path: "product",
+        },
       });
 
     if (!user) throw new Error("Email not found, please sing up.");
@@ -46,28 +39,23 @@ const Mutation = {
 
     if (!validPassword) throw new Error("Invalid email or password.");
 
-    const token = jwt.sign({
-      userId: user.id
-    }, process.env.SECRET, {
-      expiresIn: "7day",
-    });
+    const token = jwt.sign(
+      {
+        userId: user.id,
+      },
+      process.env.SECRET,
+      {
+        expiresIn: "7day",
+      }
+    );
 
     return {
       user,
-      jwt: token
+      jwt: token,
     };
   },
-  edit_account_user: async (parent, args, {
-    userId
-  }, info) => {
-    const {
-      id,
-      name,
-      tel,
-      line_id,
-      address,
-      image_profile
-    } = args;
+  edit_account_user: async (parent, args, { userId }, info) => {
+    const { id, name, tel, line_id, address, image_profile } = args;
 
     if (!userId) throw new Error("Please login");
 
@@ -86,12 +74,10 @@ const Mutation = {
 
     return updatedUser;
   },
-  requestResetPassword: async (parent, {
-    email
-  }, context, info) => {
+  requestResetPassword: async (parent, { email }, context, info) => {
     // Find user in database
     const user = await User.findOne({
-      email
+      email,
     });
 
     //2. If not found user the throw error
@@ -132,16 +118,13 @@ const Mutation = {
         console.log(error.response.body.errors[0].message);
       });
     return {
-      message: "Check your email"
+      message: "Check your email",
     };
   },
-  resetResetPassword: async (parent, {
-    password,
-    token
-  }, context, info) => {
+  resetResetPassword: async (parent, { password, token }, context, info) => {
     // Find user in database by reset token
     const user = await User.findOne({
-      resetPasswordToken: token
+      resetPasswordToken: token,
     });
 
     // If can't found user throw error
@@ -181,7 +164,8 @@ const Mutation = {
       throw new Error("Email already exist.");
     } else if (isUsernameExist) {
       throw new Error("Username already exist.");
-    } else {}
+    } else {
+    }
 
     //Validate password
     if (args.password.trim().length < 6) {
@@ -194,13 +178,11 @@ const Mutation = {
     return User.create({
       ...args,
       email,
-      password
+      password,
     });
   },
 
-  createProduct: async (parent, args, {
-    userId
-  }, info) => {
+  createProduct: async (parent, args, { userId }, info) => {
     if (!userId) throw new Error("Please login");
     // console.log(args.pd_options_attr[0])
     if (!args.name || !args.description || !args.price || !args.imageUrl) {
@@ -208,7 +190,7 @@ const Mutation = {
     }
     const product = await Product.create({
       ...args,
-      user: userId
+      user: userId,
     });
 
     //เซ็คว่าลูกค้ามีสินค้านี้อยู่หรือไหม
@@ -220,14 +202,13 @@ const Mutation = {
     }
 
     //เพิ่มจำนวนสินค้าของ user
-    const qtyPd = await user.products.length
+    const qtyPd = await user.products.length;
     console.log(user.products.length);
     const updateInfo = {
       qtyProducts: !!qtyPd ? qtyPd : user.qtyProducts,
     };
     await User.findByIdAndUpdate(userId, updateInfo);
 
-    
     //เช็ค cat ว่ามีอยู่หรือไม่
     const productCategoryID = await ProductCategory.find({});
     const cusProductCategoryID =
@@ -245,6 +226,15 @@ const Mutation = {
     } else {
       productCategory.products.push(product);
     }
+    const qty_pro_cat = await productCategory.products.length;
+    const update_qty_pro_cat = {
+      quantity: !!qty_pro_cat ? qty_pro_cat : productCategory.quantity,
+    };
+
+    await ProductCategory.findByIdAndUpdate(
+      args.productCategory,
+      update_qty_pro_cat
+    );
 
     //เช็ค attr ว่ามีอยู่หรือไม่
     args.pd_options_attr.map(async (items) => {
@@ -271,13 +261,11 @@ const Mutation = {
     return Product.findById(product.id).populate({
       path: "user",
       populate: {
-        path: "products"
+        path: "products",
       },
     });
   },
-  createProductCategory: async (parent, args, {
-    userId
-  }, info) => {
+  createProductCategory: async (parent, args, { userId }, info) => {
     if (!userId) throw new Error("Please login");
 
     if (!args.name || !args.description || !args.slug || !args.imageUrl) {
@@ -301,13 +289,11 @@ const Mutation = {
     return ProductCategory.findById(productCategory.id).populate({
       path: "user",
       populate: {
-        path: "productCategories"
+        path: "productCategories",
       },
     });
   },
-  createProductAttribute: async (parent, args, {
-    userId
-  }, info) => {
+  createProductAttribute: async (parent, args, { userId }, info) => {
     if (!userId) throw new Error("Please login");
 
     if (!args.name || !args.description || !args.slug || !args.imageUrl) {
@@ -331,23 +317,17 @@ const Mutation = {
     return ProductAttribute.findById(productAttribute.id).populate({
       path: "user",
       populate: {
-        path: "productAttributes"
+        path: "productAttributes",
       },
     });
   },
-  createOptionsAttr: async (parent, args, {
-    userId
-  }, info) => {
+  createOptionsAttr: async (parent, args, { userId }, info) => {
     if (!userId) throw new Error("Please login");
     const attrId = "5f3e5511639b9e19205c04e4";
     if (!args.name || !args.slug || !args.opVal) {
       throw new Error("Please provide all required fields.");
     }
-    const {
-      name,
-      slug,
-      opVal
-    } = args;
+    const { name, slug, opVal } = args;
     const parentAttrName = await ProductAttribute.findById(attrId);
     const productAttribute = await PD_options_attr.create({
       name,
@@ -369,13 +349,11 @@ const Mutation = {
     return PD_options_attr.findById(productAttribute.id).populate({
       path: "parent",
       populate: {
-        path: "pd_options_attrs"
+        path: "pd_options_attrs",
       },
     });
   },
-  updateProduct: async (parent, args, {
-    userId
-  }, info) => {
+  updateProduct: async (parent, args, { userId }, info) => {
     const {
       id,
       name,
@@ -414,7 +392,7 @@ const Mutation = {
           (productId) => productId.toString() !== id.toString()
         );
 
-        console.log('filter' + DataCatPro);
+        console.log("filter" + DataCatPro);
         console.log(id);
         const updateIdProCat = {
           products: !!DataCatPro ? DataCatPro : DataCat.products,
@@ -423,27 +401,23 @@ const Mutation = {
           product.productCategory,
           updateIdProCat
         );
-        console.log('Deleted');
+        console.log("Deleted");
 
         //add product to new cat
-        const findCategory = await ProductCategory.findById(
-          productCategory
-        );
+        const findCategory = await ProductCategory.findById(productCategory);
         //เช็คว่ามี id รึยีง
         const findProNewCat = findCategory.products.findIndex(
           (productID) => productID === id
         );
-        console.log('finpronewcat = ' + findProNewCat);
+        console.log("finpronewcat = " + findProNewCat);
         if (findProNewCat > -1) {
-          ''
+          ("");
         } else {
           findCategory.products.push(product);
         }
         await findCategory.save();
-        console.log('Added');
-
+        console.log("Added");
       } catch (error) {}
-
 
       console.log("complete");
     }
@@ -460,12 +434,12 @@ const Mutation = {
       shipping: !!shipping ? shipping : product.shipping,
       pd_life: !!pd_life ? pd_life : product.pd_life,
       integrity: !!integrity ? integrity : product.integrity,
-      productCategory: !!productCategory ?
-        productCategory :
-        product.productCategory,
-      pd_options_attr: !!pd_options_attr ?
-        pd_options_attr :
-        product.pd_options_attr,
+      productCategory: !!productCategory
+        ? productCategory
+        : product.productCategory,
+      pd_options_attr: !!pd_options_attr
+        ? pd_options_attr
+        : product.pd_options_attr,
     };
 
     //Update product in database
@@ -478,12 +452,8 @@ const Mutation = {
 
     return updatedProduct;
   },
-  deleteProduct: async (parent, args, {
-    userId
-  }, info) => {
-    const {
-      id
-    } = args;
+  deleteProduct: async (parent, args, { userId }, info) => {
+    const { id } = args;
     if (!userId) throw new Error("Please login");
 
     const product = await Product.findById(id);
@@ -500,18 +470,25 @@ const Mutation = {
     );
 
     await User.findByIdAndUpdate(userId, {
-      products: updatedUserProduct
+      products: updatedUserProduct,
+      qtyProducts: updatedUserProduct.length,
+    });
+
+    //Del produxt from cat
+    const cat_pro = await ProductCategory.findById(product.productCategory);
+    const updataedCatPro = cat_pro.products.filter(
+      (productId) => productId.toString() !== id.toString()
+    );
+    await ProductCategory.findByIdAndUpdate(product.productCategory, {
+      products: updataedCatPro,
+      quantity: updataedCatPro.length,
     });
 
     return deletedProduct;
   },
-  addToCart: async (parent, args, {
-    userId
-  }, info) => {
+  addToCart: async (parent, args, { userId }, info) => {
     //this id is  productId
-    const {
-      id
-    } = args;
+    const { id } = args;
     if (!userId) throw new Error("Please login");
 
     try {
@@ -521,7 +498,7 @@ const Mutation = {
       const user = await User.findById(userId).populate({
         path: "carts",
         populate: {
-          path: "product"
+          path: "product",
         },
       });
 
@@ -539,13 +516,13 @@ const Mutation = {
         });
         // A.2 Update quantity od that cartItem ---> increase
         const updatedCartItem = await CartItem.findById(
-            user.carts[findCartItemIndex].id
-          )
+          user.carts[findCartItemIndex].id
+        )
           .populate({
-            path: "product"
+            path: "product",
           })
           .populate({
-            path: "user"
+            path: "user",
           });
 
         return updatedCartItem;
@@ -560,10 +537,10 @@ const Mutation = {
         // find new cartItem
         const newCartItem = await CartItem.findById(cartItem.id)
           .populate({
-            path: "product"
+            path: "product",
           })
           .populate({
-            path: "user"
+            path: "user",
           });
         // B.2 Update user.carts
         await User.findByIdAndUpdate(userId, {
@@ -576,12 +553,8 @@ const Mutation = {
       console.log(error);
     }
   },
-  deleteCart: async (parent, args, {
-    userId
-  }, info) => {
-    const {
-      id
-    } = args;
+  deleteCart: async (parent, args, { userId }, info) => {
+    const { id } = args;
     if (!userId) throw new Error("Please login");
 
     // Find cart from give id
@@ -605,7 +578,7 @@ const Mutation = {
       (cartId) => cartId.toString() !== deletedCart.id.toString()
     );
     await User.findByIdAndUpdate(userId, {
-      carts: updatedUserCart
+      carts: updatedUserCart,
     });
 
     return deletedCart;
