@@ -254,8 +254,8 @@ const Mutation = {
       await pd_options_attr.save();
       //เพิ่มจำนวนสินค้าเข้าไปที่ att
       await PD_options_attr.findByIdAndUpdate(items, {
-        quantity: pd_options_attr.products.length
-      })
+        quantity: pd_options_attr.products.length,
+      });
     });
 
     await productCategory.save();
@@ -383,6 +383,7 @@ const Mutation = {
     if (userId !== product.user.toString()) {
       throw new Error("You are not authorized");
     }
+
     //Check if change catPro need to delete from old catPro
     console.log("new = " + productCategory);
     console.log("old = " + product.productCategory);
@@ -423,12 +424,59 @@ const Mutation = {
         await findCategory.save();
 
         await ProductCategory.findByIdAndUpdate(productCategory, {
-          quantity: findCategory.products.length
-        })
+          quantity: findCategory.products.length,
+        });
         console.log("Added");
       } catch (error) {}
 
       console.log("complete");
+    }
+
+    //Check if change att_Pro need to delete from old att_Pro
+    console.log("new = " + pd_options_attr);
+    console.log("old = " + product.pd_options_attr);
+    if (product.pd_options_attr != pd_options_attr) {
+      const Data_att = await PD_options_attr.findById(product.pd_options_attr);
+
+      try {
+        //Del from old att
+        const data_att_pro = await Data_att.products.filter(
+          (productId) => productId.toString() !== id.toString()
+        );
+        console.log('filter'+data_att_pro.length);
+
+        // const update_pto_att = {
+        //   products: !!data_att_pro ? data_att_pro : Data_att.products,
+        //   quantity: !!data_att_pro.length ? data_att_pro.length : quantity,
+        // };
+      
+        console.log("Deleted");
+        await PD_options_attr.findByIdAndUpdate(
+          product.pd_options_attr, {
+            products: data_att_pro,
+            quantity: data_att_pro.length
+          }
+        );
+
+        //add product to new cat
+        const find_att= await PD_options_attr.findById(pd_options_attr);
+        //เช็คว่ามี id รึยีง
+        const find_pro_neweAtt = find_att.products.findIndex(
+          (productID) => productID === id
+        );
+        console.log("finpronewcat = " + find_pro_neweAtt);
+        if (find_pro_neweAtt > -1) {
+          ("");
+        } else {
+          find_att.products.push(product);
+        }
+        await find_att.save();
+
+        await PD_options_attr.findByIdAndUpdate(pd_options_attr, {
+          quantity: find_att.products.length,
+        });
+        console.log("Added aatt compelte");
+      } catch (error) {}
     }
 
     // Form updated information
@@ -494,15 +542,14 @@ const Mutation = {
     });
 
     //Del product from att
-    const att_pro = await PD_options_attr.findById(product.pd_options_attr)
+    const att_pro = await PD_options_attr.findById(product.pd_options_attr);
     const update_att_pro = await att_pro.products.filter(
       (productId) => productId.toString() !== id.toString()
-    )
+    );
     await PD_options_attr.findByIdAndUpdate(product.pd_options_attr, {
       products: update_att_pro,
       quantity: update_att_pro.length,
     });
-
 
     return deletedProduct;
   },
