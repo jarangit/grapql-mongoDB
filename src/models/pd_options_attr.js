@@ -25,6 +25,9 @@ const pd_options_attrSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Product"
     }],
+    quantity: {
+        type: Number
+    },
     parent: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "ProductAttribute",

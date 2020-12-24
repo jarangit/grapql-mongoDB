@@ -252,6 +252,10 @@ const Mutation = {
         pd_options_attr.products.push(product);
       }
       await pd_options_attr.save();
+      //เพิ่มจำนวนสินค้าเข้าไปที่ att
+      await PD_options_attr.findByIdAndUpdate(items, {
+        quantity: pd_options_attr.products.length
+      })
     });
 
     await productCategory.save();
