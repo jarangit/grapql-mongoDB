@@ -400,6 +400,7 @@ const Mutation = {
         console.log(id);
         const updateIdProCat = {
           products: !!DataCatPro ? DataCatPro : DataCat.products,
+          quantity: !!DataCatPro.length ? DataCatPro.length : quantity,
         };
         await ProductCategory.findByIdAndUpdate(
           product.productCategory,
@@ -420,6 +421,10 @@ const Mutation = {
           findCategory.products.push(product);
         }
         await findCategory.save();
+
+        await ProductCategory.findByIdAndUpdate(productCategory, {
+          quantity: findCategory.products.length
+        })
         console.log("Added");
       } catch (error) {}
 
@@ -487,6 +492,17 @@ const Mutation = {
       products: updataedCatPro,
       quantity: updataedCatPro.length,
     });
+
+    //Del product from att
+    const att_pro = await PD_options_attr.findById(product.pd_options_attr)
+    const update_att_pro = await att_pro.products.filter(
+      (productId) => productId.toString() !== id.toString()
+    )
+    await PD_options_attr.findByIdAndUpdate(product.pd_options_attr, {
+      products: update_att_pro,
+      quantity: update_att_pro.length,
+    });
+
 
     return deletedProduct;
   },
