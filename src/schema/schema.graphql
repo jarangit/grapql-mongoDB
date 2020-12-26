@@ -8,7 +8,7 @@ type Query {
   productCategory(id: ID!): ProductCategory
   productAttributes: [ProductAttribute]!
   pd_options_attrs: [PD_options_attr]!
-  carts: [CartItem]!
+  fav_products: [FavItem]!
   filterProducts(search: String, page: Float, limit: Float): filterProducts
 }
 
@@ -86,9 +86,9 @@ type Mutation {
     pd_options_attr: [String]
   ): Product!
 
-  addToCart(id: ID!): CartItem!
+  addToCart(id: ID!): FavItem!
 
-  deleteCart(id: ID!): CartItem!
+  deleteCart(id: ID!): FavItem!
 
   deleteProduct(id: ID!): Product!
 }
@@ -105,11 +105,11 @@ type User {
   address: String
   image_profile: String
   # password: String!
-  qtyProducts: Float
-  qty_Fav_PD: Float
+  qty_products: Float
+  qty_fav_products: Float
   productCategories: [ProductCategory]
   products: [Product]
-  carts: [CartItem]!
+  fav_products: [FavItem]!
   createdAt: Date!
 }
 
@@ -165,11 +165,11 @@ type PD_options_attr {
   products: [Product]
 }
 
-type CartItem {
+type FavItem {
   id: ID!
   product: Product!
-  quantity: Int!
   user: User!
+  quantity: Float
   createdAt: Date!
 }
 

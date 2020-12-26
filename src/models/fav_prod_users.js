@@ -1,6 +1,6 @@
 import mongoose from "mongoose"
 
-const cartItemSchema = new mongoose.Schema({
+const FavItemSchema = new mongoose.Schema({
   product: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Product"
@@ -20,6 +20,6 @@ const cartItemSchema = new mongoose.Schema({
   }
 })
 
-const CartItem = mongoose.model("CartItem", cartItemSchema)
+const FavItem = mongoose.model("FavItem", FavItemSchema)
 
-export default CartItem
+export default FavItem

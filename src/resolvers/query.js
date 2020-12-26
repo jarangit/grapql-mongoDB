@@ -1,6 +1,6 @@
 import User from "../models/user";
 import Product from "../models/product";
-import CartItem from "../models/cartItem";
+import FavItem from "../models/fav_prod_users";
 import ProductCategory from "../models/productCategory";
 import ProductAttribute from "../models/productAttribute";
 import PD_options_attr from "../models/pd_options_attr";
@@ -26,7 +26,7 @@ const Query = {
         },
       })
       .populate({
-        path: "carts",
+        path: "fav_products",
         populate: {
           path: "product",
         },
@@ -48,7 +48,7 @@ const Query = {
       },
     })
     .populate({
-      path: "carts",
+      path: "fav_products",
       populate: {
         path: "product",
       },
@@ -204,12 +204,12 @@ const Query = {
       createdAt: "desc",
     }),
 
-  carts: (parent, args, context, info) =>
-    CartItem.find()
+  fav_products: (parent, args, context, info) =>
+    FavItem.find()
     .populate({
       path: "user",
       populate: {
-        path: "carts",
+        path: "fav_products",
       },
     })
     .sort({
@@ -218,7 +218,7 @@ const Query = {
     .populate({
       path: "product",
       populate: {
-        path: "carts",
+        path: "fav_products",
       },
     })
     .sort({

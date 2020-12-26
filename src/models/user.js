@@ -38,16 +38,16 @@ const userSchema = new mongoose.Schema({
     resetTokenExpiry: {
         type: Number
     },
-    qtyProducts: {
+    qty_products: {
         type: Number
     },
-    qty_Fav_PD: {
+    qty_fav_products: {
         type: Number
     },
-    carts: [
+    fav_products: [
         {
           type: mongoose.Schema.Types.ObjectId,
-          ref: "CartItem"
+          ref: "FavItem"
         }
     ],
     products: [

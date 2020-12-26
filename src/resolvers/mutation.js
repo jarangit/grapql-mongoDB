@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/user";
 import Product from "../models/product";
-import CartItem from "../models/cartItem";
+import FavItem from "../models/fav_prod_users";
 import sgMail from "@sendgrid/mail";
 import { EROFS } from "constants";
 import ProductCategory from "../models/productCategory";
@@ -26,7 +26,7 @@ const Mutation = {
         },
       })
       .populate({
-        path: "carts",
+        path: "fav_products",
         populate: {
           path: "product",
         },
@@ -205,7 +205,7 @@ const Mutation = {
     const qtyPd = await user.products.length;
     console.log(user.products.length);
     const updateInfo = {
-      qtyProducts: !!qtyPd ? qtyPd : user.qtyProducts,
+      qty_products: !!qtyPd ? qtyPd : user.qty_products,
     };
     await User.findByIdAndUpdate(userId, updateInfo);
 
@@ -443,23 +443,21 @@ const Mutation = {
         const data_att_pro = await Data_att.products.filter(
           (productId) => productId.toString() !== id.toString()
         );
-        console.log('filter'+data_att_pro.length);
+        console.log("filter" + data_att_pro.length);
 
         // const update_pto_att = {
         //   products: !!data_att_pro ? data_att_pro : Data_att.products,
         //   quantity: !!data_att_pro.length ? data_att_pro.length : quantity,
         // };
-      
+
         console.log("Deleted");
-        await PD_options_attr.findByIdAndUpdate(
-          product.pd_options_attr, {
-            products: data_att_pro,
-            quantity: data_att_pro.length
-          }
-        );
+        await PD_options_attr.findByIdAndUpdate(product.pd_options_attr, {
+          products: data_att_pro,
+          quantity: data_att_pro.length,
+        });
 
         //add product to new cat
-        const find_att= await PD_options_attr.findById(pd_options_attr);
+        const find_att = await PD_options_attr.findById(pd_options_attr);
         //เช็คว่ามี id รึยีง
         const find_pro_neweAtt = find_att.products.findIndex(
           (productID) => productID === id
@@ -528,7 +526,7 @@ const Mutation = {
 
     await User.findByIdAndUpdate(userId, {
       products: updatedUserProduct,
-      qtyProducts: updatedUserProduct.length,
+      qty_products: updatedUserProduct.length,
     });
 
     //Del produxt from cat
@@ -563,27 +561,30 @@ const Mutation = {
 
       //เช็คว่ามีการเพิ่มสินค้าหรือยัง
       const user = await User.findById(userId).populate({
-        path: "carts",
+        path: "fav_products",
         populate: {
           path: "product",
         },
       });
 
-      const findCartItemIndex = user.carts.findIndex(
-        (cartItem) => cartItem.populate.id === id
+      const findFavItemIndex = user.fav_products.findIndex(
+        (FavItem) => FavItem.populate.id === id
       );
 
-      if (findCartItemIndex > -1) {
+      if (findFavItemIndex > -1) {
         // A. The new addToCart item is already in cart
         // A.1 Find the cart from database
-        user.carts[findCartItemIndex].quantity += 1;
+        user.fav_products[findFavItemIndex].quantity += 1;
 
-        await CartItem.findByIdAndUpdate(user.carts[findCartItemIndex].id, {
-          quantity: user.carts[findCartItemIndex].quantity,
-        });
-        // A.2 Update quantity od that cartItem ---> increase
-        const updatedCartItem = await CartItem.findById(
-          user.carts[findCartItemIndex].id
+        await FavItem.findByIdAndUpdate(
+          user.fav_products[findFavItemIndex].id,
+          {
+            quantity: user.fav_products[findFavItemIndex].quantity,
+          }
+        );
+        // A.2 Update quantity od that FavItem ---> increase
+        const updatedFavItem = await FavItem.findById(
+          user.fav_products[findFavItemIndex].id
         )
           .populate({
             path: "product",
@@ -592,29 +593,35 @@ const Mutation = {
             path: "user",
           });
 
-        return updatedCartItem;
+        return updatedFavItem;
       } else {
         // B. The new addToCart item is not in cart yet
-        // B.1 Create new cartItem
-        const cartItem = await CartItem.create({
+        // B.1 Create new FavItem
+        const favItem = await FavItem.create({
           product: id,
           quantity: 1,
           user: userId,
         });
-        // find new cartItem
-        const newCartItem = await CartItem.findById(cartItem.id)
+        // find new FavItem
+        const newFavItem = await FavItem.findById(favItem.id)
           .populate({
             path: "product",
           })
           .populate({
             path: "user",
           });
-        // B.2 Update user.carts
+        // B.2 Update user.fav_products
         await User.findByIdAndUpdate(userId, {
-          carts: [...user.carts, newCartItem],
+          fav_products: [...user.fav_products, newFavItem],
         });
 
-        return newCartItem;
+        // add qty user qty fav prod
+        const get_qty_fav_prod_user = await User.findById(userId);
+        await User.findByIdAndUpdate(userId, {
+          qty_fav_products: get_qty_fav_prod_user.fav_products.length,
+        });
+
+        return newFavItem;
       }
     } catch (error) {
       console.log(error);
@@ -625,7 +632,7 @@ const Mutation = {
     if (!userId) throw new Error("Please login");
 
     // Find cart from give id
-    const cart = await CartItem.findById(id);
+    const cart = await FavItem.findById(id);
 
     // check logged
 
@@ -639,15 +646,17 @@ const Mutation = {
     }
 
     // Delete cart
-    const deletedCart = await CartItem.findByIdAndRemove(id);
+    const deletedCart = await FavItem.findByIdAndRemove(id);
 
-    const updatedUserCart = user.carts.filter(
+    const updatedUserCart = user.fav_products.filter(
       (cartId) => cartId.toString() !== deletedCart.id.toString()
     );
     await User.findByIdAndUpdate(userId, {
-      carts: updatedUserCart,
-    });
+      fav_products: updatedUserCart,
+      qty_fav_products: updatedUserCart.length,
 
+    });
+    console.log("del fav " + updatedUserCart.length);
     return deletedCart;
   },
 };
