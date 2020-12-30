@@ -40,7 +40,6 @@ type Mutation {
     description: String!
     address: String!
     reason_sell: String
-    shipping: [String]
     price: Float!
     pd_life: Float!
     integrity: Float!
@@ -76,7 +75,6 @@ type Mutation {
     description: String
     address: String
     reason_sell: String
-    shipping: [String]
     price: Float
     pd_life: Float
     integrity: Float
@@ -84,6 +82,8 @@ type Mutation {
     image_gallery: [String]
     productCategory: String
     pd_options_attr: [String]
+    user_view: Float
+    user_like: Float
   ): Product!
 
   addToCart(id: ID!): FavItem!
@@ -118,7 +118,6 @@ type Product {
   description: String!
   address: String!
   reason_sell: String
-  shipping: [String]
   name: String!
   price: Float!
   pd_life: Float!
@@ -129,6 +128,8 @@ type Product {
   productCategory: ProductCategory!
   pd_options_attr: [PD_options_attr]!
   createdAt: Date!
+  user_view: Float
+  user_like: Float
 }
 
 type ProductCategory {

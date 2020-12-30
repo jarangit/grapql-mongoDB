@@ -300,7 +300,7 @@ const Mutation = {
   createProductAttribute: async (parent, args, { userId }, info) => {
     if (!userId) throw new Error("Please login");
 
-    if (!args.name || !args.description || !args.slug || !args.imageUrl) {
+    if (!args.name || !args.description || !args.slug) {
       throw new Error("Please provide all required fields.");
     }
     const productAttribute = await ProductAttribute.create({
@@ -327,7 +327,7 @@ const Mutation = {
   },
   createOptionsAttr: async (parent, args, { userId }, info) => {
     if (!userId) throw new Error("Please login");
-    const attrId = "5f3e5511639b9e19205c04e4";
+    const attrId = "5fe722f2e025d54eb49ef445";
     if (!args.name || !args.slug || !args.opVal) {
       throw new Error("Please provide all required fields.");
     }
@@ -367,11 +367,12 @@ const Mutation = {
       image_gallery,
       address,
       reason_sell,
-      shipping,
       pd_life,
       integrity,
       productCategory,
       pd_options_attr,
+      user_view,
+      user_like
     } = args;
 
     //Check if user logged in
@@ -486,7 +487,6 @@ const Mutation = {
       imageUrl: !!imageUrl ? imageUrl : product.imageUrl,
       image_gallery: !!image_gallery ? image_gallery : product.image_gallery,
       reason_sell: !!reason_sell ? reason_sell : product.reason_sell,
-      shipping: !!shipping ? shipping : product.shipping,
       pd_life: !!pd_life ? pd_life : product.pd_life,
       integrity: !!integrity ? integrity : product.integrity,
       productCategory: !!productCategory
@@ -495,6 +495,8 @@ const Mutation = {
       pd_options_attr: !!pd_options_attr
         ? pd_options_attr
         : product.pd_options_attr,
+      user_view: !!user_view ? user_view : product.user_view,
+      user_like: !!user_like ? user_like : product.user_like,
     };
 
     //Update product in database

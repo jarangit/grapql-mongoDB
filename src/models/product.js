@@ -20,11 +20,6 @@ const productSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
-  shipping: {
-    type: [String],
-    // required: true,
-    trim: true
-  },
   price: {
     type: Number,
     required: true
@@ -36,6 +31,12 @@ const productSchema = new mongoose.Schema({
   integrity: {
     type: Number,
     required: true
+  },
+  user_view: {
+    type: Number
+  },
+  user_like: {
+    type: Number
   },
   imageUrl: {
     type: String,
